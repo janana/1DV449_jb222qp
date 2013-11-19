@@ -1,0 +1,10 @@
+thead {
+	font-weight: bold;
+}
+#container {
+	width: 1000px;
+	margin: auto;
+}
+body {
+	background-color: silver;
+}

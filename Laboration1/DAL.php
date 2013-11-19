@@ -17,16 +17,18 @@ class DAL {
         $name = $producer->name;
         $homepage = $producer->homepage;
         $location = $producer->location;
-        $picURL = $producer->picURL;
+        $id = $producer->id;
+        $status = $producer->status;
 
-		$sql = "INSERT INTO Producers(Name, Homepage, Location, PicURL) 
-				VALUES (?, ?, ?, ?)";
+		$sql = "INSERT INTO Producers(Name, Homepage, Location, ProducerID, Status) 
+				VALUES (?, ?, ?, ?, ?)";
 		$prep = $this->connection->prepare($sql);
         if ($prep == false) {
-            throw new Exception("prepare of [$sql] failed " . $this->connection->error);
+            throw new Exception("prepare of [$sql] failed " . 
+                                $this->connection->error);
         }
 		
-        $exec = $prep->bind_param("ssss", $name, $homepage, $location, $picURL);
+        $exec = $prep->bind_param("sssis", $name, $homepage, $location, $id, $status);
 		if ($exec == false) {
 			throw new Exception("Bind param of [$sql] failed " . $prep->error);
 		}
@@ -38,7 +40,7 @@ class DAL {
 
 
 	public function getProducers() {
-		$sql = "SELECT Name, Homepage, Location, PicURL FROM Producers";
+		$sql = "SELECT Name, Homepage, Location, ProducerID, Status FROM Producers";
         $prep = $this->connection->prepare($sql);
         if ($prep == false) {
             throw new Exception("prepare of [$sql] failed " . 
@@ -48,13 +50,13 @@ class DAL {
         if ($exec == false) {
         	throw new Exception("execute of [$sql] failed " . $prep->error);
         }
-        $exec = $prep->bind_result($name, $homepage, $location, $picURL);
+        $exec = $prep->bind_result($name, $homepage, $location, $id, $status);
         if ($exec == false) {
         	throw new Exception("execute of [$sql] failed " . $prep->error);
         }
         $producerList = array();
 	    while ($prep->fetch()) {
-	        $producerList[] = new Producer($name, $homepage, $location, $picURL);
+	        $producerList[] = new Producer($name, $homepage, $location, $id, $status);
 	    }
         return $producerList;
 	}

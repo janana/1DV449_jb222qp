@@ -1,15 +1,12 @@
 <?php
 
 class Producer {
-	public $name;
-	public $homepage;
-	public $location;
-	public $picURL;
 
-	public function __construct($name, $homepage, $location, $picURL) {
+	public function __construct($name, $homepage, $location, $id, $status) {
 		$this->name = $name;
 		$this->homepage = $homepage;
 		$this->location = $location;
-		$this->picURL = $picURL;
+		$this->id = $id;
+		$this->status = $status;
 	}
 }
