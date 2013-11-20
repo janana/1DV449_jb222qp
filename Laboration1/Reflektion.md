@@ -8,10 +8,10 @@ Samma sak gäller DOMDocument, det var väldigt smidigt att jobba med, samt att 
 
 Risker med applikationer som innefattar automatisk skrapning av webbsidor?
 =======================
-De kan sakta ned den ursprungliga hemsidan
-Om den ursprungliga hemsidan struktureras om kan skraporna sluta fungera
-Det kan sakta ned applikationen som innefattar skrapan då det kan ta tid att exekvera scriptet
-Applikationerna kan innehålla information som är copyright-skyddad av de ursprungliga hemsidorna/hemsidan
+- De kan sakta ned den ursprungliga hemsidan
+- Om den ursprungliga hemsidan struktureras om kan skraporna sluta fungera
+- Det kan sakta ned applikationen som innefattar skrapan då det kan ta tid att exekvera scriptet
+- Applikationerna kan innehålla information som är copyright-skyddad av de ursprungliga hemsidorna/hemsidan
 
 Extra problem med att skrapa en sida gjord i ASP.NET WebForms?
 =======================
