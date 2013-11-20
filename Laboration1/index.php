@@ -20,7 +20,10 @@ $producerHTML = "<table class='table table-striped table-bordered table-condense
 					</tr>
 				</thead><tbody>";
 
+
+
 foreach($producerList as $producer) {
+
 	$producerHTML .= "
 					<tr>
 						<td>$producer->id</td>
@@ -34,6 +37,8 @@ foreach($producerList as $producer) {
 
 $producerHTML .= "</tbody></table>";
 
+$producerHTMLEncode = iconv('UTF-8', "ISO-8859-1", $producerHTML);
+
 echo "<!DOCTYPE html>
 			<html lang='sv'>
 				<head>
@@ -46,7 +51,7 @@ echo "<!DOCTYPE html>
 					<div id='container'>
 					<h1>Laboration 1 - Jb222qp</h1>
 						<h2>Skrapad data</h2>
-						$producerHTML
+						$producerHTMLEncode
 					</div>
 				</body>
 			</html>";
