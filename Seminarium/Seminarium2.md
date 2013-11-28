@@ -27,6 +27,7 @@ Det enda jag i nuläget inte gör över internet är att jobba i photoshop och s
 
 ## Vad finns det för krav på den data som kallas för öppen data?
 [Min källa](http://www.vinnova.se/opendata)
+
 **Komplett:** Information ska göras tillgänglig i så stor utsträckning som möjligt. 
 
 **Primär:** Informationen ska så långt som möjligt ges ut i orginalformatet och i så hög kvalitet som möjligt.
