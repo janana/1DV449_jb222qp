@@ -28,11 +28,17 @@ Det enda jag i nuläget inte gör över internet är att jobba i photoshop och s
 ## Vad finns det för krav på den data som kallas för öppen data?
 [Min källa](http://www.vinnova.se/opendata)
 **Komplett:** Information ska göras tillgänglig i så stor utsträckning som möjligt. 
+
 **Primär:** Informationen ska så långt som möjligt ges ut i orginalformatet och i så hög kvalitet som möjligt.
+
 **Aktuell:** Informationen ska bli tillgänglig så snabbt som möjligt så den fortfarande är aktuell i sammanhanget.
+
 **Tillgänglig:** Information görs tillgänglig för så många användare som möjligt för så många ändamål som möjligt.
+
 **Maskinläsbar:** Informationen är strukturerad på ett sätt som gör den läsbar och lättanvänd.
+
 **Fri:** Informationen är tillgänglig för alla utan krav på betalning, eller krav på licens- eller registreringskrav.
+
 **I ett öppet format:** Det format informationen lämnas i följer en öppen standard.
 
 ## Hur kommer öppen data spela roll för webbutvecklare?
