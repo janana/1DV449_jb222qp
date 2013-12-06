@@ -60,9 +60,7 @@ var Prototype = {
 if (Prototype.Browser.MobileSafari)
   Prototype.BrowserFeatures.SpecificElementExtensions = false;
 
-
 var Abstract = { };
-
 
 var Try = {
   these: function() {

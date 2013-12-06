@@ -42,7 +42,7 @@ function isUser($u, $p) {
 		$db = new PDO("sqlite:db.db");
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
-	catch(PDOEception $e) {
+	catch(PDOException $e) {
 		die("Del -> " .$e->getMessage());
 	}
 	$q = "SELECT id FROM users WHERE username = '$u' AND password = '$p'";
@@ -73,7 +73,7 @@ function getUser($user) {
 		$db = new PDO("sqlite:db.db");
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
-	catch(PDOEception $e) {
+	catch(PDOException $e) {
 		die("Del -> " .$e->getMessage());
 	}
 	$q = "SELECT * FROM users WHERE username = '$user'";

@@ -1,0 +1,79 @@
+/* Googleapis font */
+@font-face {
+  font-family: 'Karla';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Karla'), local('Karla-Regular'), url(http://themes.googleusercontent.com/static/fonts/karla/v2/QT0qO2FiFD03cwUe_t62t6CWcynf_cDxXwCLxiixG1c.woff) format('woff');
+}
+@font-face {
+  font-family: 'Karla';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Karla Bold'), local('Karla-Bold'), url(http://themes.googleusercontent.com/static/fonts/karla/v2/3nZS3BKzlvhkwl4yjCQcjHYhjbSpvc47ee6xR_80Hnw.woff) format('woff');
+}
+@font-face {
+  font-family: 'Wellfleet';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Wellfleet'), local('Wellfleet-Regular'), url(http://themes.googleusercontent.com/static/fonts/wellfleet/v1/qu15OBOh_Q0T8ooRUaKSDbO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
+}
+/* Custom css */
+#mess_p_mess {
+	width: 100%; height: 250px; overflow-y: scroll !important; border: solid 3px black; padding: 5px;
+}
+
+#mess_p_headline {
+	font-family: 'Wellfleet', cursive;
+}
+.message_container {
+	border: 1px solid black;
+	padding: 8px;
+	background-color: #DDD;
+}
+.clear {
+	clear: both;
+}
+
+/* CSS from http://vhost3.lnu.se:20080/~1dv449/scrape/css.php?css=grid1 */
+.container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+h4 {
+  margin-top: 25px;
+}
+.row {
+  margin-bottom: 20px;
+}
+.row .row {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.right {
+	text-align: right;
+}
+
+.nobg {
+	background: 0;
+}
+
+/* CSS from http://vhost3.lnu.se:20080/~1dv449/scrape/css.php?css=grid2 */
+[class*="col-"] {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  border: 1px solid #ddd;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid rgba(86,61,124,.2);
+}
+
+hr {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.message_container {
+	border: 1px solid black;
+}
