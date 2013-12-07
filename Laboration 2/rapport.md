@@ -1,4 +1,8 @@
 #Rapport Laboration 2
+
+Min version av applikationen finns att testa på [janinaeb.se](http://janinaeb.se/kurs/webbteknik2/Laboration2/).
+
+
 ## 1. Optimering
 
 Alla tider är genomsnittliga av åtminstone 4 försök
@@ -32,4 +36,4 @@ Det finns även en php-utloggningsfunktion som inte verkar användas alls, utan 
 
 ## 3. AJAX
 
-Jag gjorde det enklaste jag kunde komma på för att lösa denna uppgift. Tidigare har message.js anropat $.ajax(...).done() vilket körs när ajax-funktionen är färdig. Det denna funktion har gjort är att poppa upp en alert som säger att meddelandet har lagts till. Jag tog bort denna alert och lade istället till ett meddelande i div-taggen där meddelanden visas med jquery-funktionen prepend() så att meddelandet ska hamna först i listan. (js/message.js:26) Lösningen är kanske inte den snyggaste, men det är inte någon del av den ursprungliga koden heller så jag tyckte den matchade.
+Jag gjorde det enklaste jag kunde komma på för att lösa denna uppgift. Tidigare har message.js (tidigare från mess.php) anropat $.ajax(...).done() vilket körs när ajax-funktionen är färdig. Det denna funktion har gjort är att poppa upp en alert som säger att meddelandet har lagts till. Jag tog bort denna alert och lade istället till ett meddelande i div-taggen där meddelanden visas med jquery-funktionen prepend() så att meddelandet ska hamna först i listan. (js/message.js:26) Lösningen är kanske inte den snyggaste, men det är inte någon del av den ursprungliga koden heller så jag tyckte den matchade.
