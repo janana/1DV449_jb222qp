@@ -23,7 +23,7 @@ $( document ).ready(
 			  	url: "functions.php",
 			  	data: {function: "add", name: name_val, message: message_val, pid: pid}
 			}).done(function(data) {
-			  alert(data);
+				$( "#mess_p_mess" ).prepend( "<p class='message_container'>" +message_val +"<br />Skrivet av: " +name_val +"</p>");
 			});
 		  
 	  });

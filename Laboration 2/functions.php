@@ -17,8 +17,10 @@ if(isset($_GET['function'])) {
 		$message = $_GET["message"];
 		$pid = $_GET["pid"];
 		
-		addToDB($name, $message, $pid);
-		echo "Det gick fint! Ladda om sidan för att se ditt meddelande!";
+		$cleanName = strip_tags($name);
+		$cleanMessage = strip_tags($message);
+		
+		addToDB($cleanName, $cleanMessage, $pid);
     }
     elseif($_GET['function'] == 'producers') {
     	$pid = $_GET["pid"];

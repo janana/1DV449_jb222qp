@@ -19,14 +19,13 @@ function checkUser() {
 	if(!session_id()) {
 		sec_session_start();
 	}
-	//var_dump($_SESSION);
 	if(!isset($_SESSION["user"])) {header('HTTP/1.1 401 Unauthorized'); die();}
 	
 	$user = getUser($_SESSION["user"]);
 	$un = $user[0]["username"];
 	
-	if(isset($_SESSION['login_string'])) {
-		if($_SESSION['login_string'] !== hash('sha512', "Come_On_You_Spurs" + $un) ) {
+	if(isset($_SESSION['login_string']) && testSession()) {
+		if($_SESSION['login_string'] !== hash('sha512', "Come_On_You_Spurs" + $un)) {
 			header('HTTP/1.1 401 Unauthorized'); die(); // Yey!
 		}
 	}
@@ -34,7 +33,20 @@ function checkUser() {
 		header('HTTP/1.1 401 Unauthorized'); die();
 	}
 }
-
+function testSession() {
+	if (isset($_SESSION["userAgent"]) && 
+		isset($_SESSION["IP"])) {
+		
+		if ($_SERVER["HTTP_USER_AGENT"] === 
+			$_SESSION["userAgent"] &&
+			$_SERVER["REMOTE_ADDR"] === 
+			$_SESSION["IP"]) {
+				
+			return true;
+		}
+	}
+	return false;
+}
 function isUser($u, $p) {
 	$db = null;
 
@@ -45,12 +57,14 @@ function isUser($u, $p) {
 	catch(PDOException $e) {
 		die("Del -> " .$e->getMessage());
 	}
-	$q = "SELECT id FROM users WHERE username = '$u' AND password = '$p'";
+	$q = "SELECT id FROM users WHERE username = ? AND password = ?"; // u, p
 
 	$result;
 	$stm;	
 	try {
 		$stm = $db->prepare($q);
+		$stm->bindParam(1, $u, PDO::PARAM_STR);
+		$stm->bindParam(2, $p, PDO::PARAM_STR);
 		$stm->execute();
 		$result = $stm->fetchAll();
 	}
@@ -76,12 +90,13 @@ function getUser($user) {
 	catch(PDOException $e) {
 		die("Del -> " .$e->getMessage());
 	}
-	$q = "SELECT * FROM users WHERE username = '$user'";
+	$q = "SELECT * FROM users WHERE username = ?"; // user
 	
 	$result;
 	$stm;	
 	try {
 		$stm = $db->prepare($q);
+		$stm->bindParam(1, $user, PDO::PARAM_STR);
 		$stm->execute();
 		$result = $stm->fetchAll();
 	}

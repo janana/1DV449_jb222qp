@@ -82,7 +82,7 @@
 				<input id="mess_inputs" type="hidden" value="" />
 				Namn: <br /><input id="name_txt" type="text" name="name" value="<?php echo $_SESSION['user']; ?>" /><br />
 				Meddelande: <br /><textarea id="message_ta" cols="50" rows="5" name="message"></textarea><br /><br />
-				<button id="add_btn" class="btn btn-primary"> Skicka ditt meddelande</button>
+				<button id="add_btn" class="btn btn-primary">Skicka ditt meddelande</button>
 				</div>
 				<div class="col-md-6">
 				<strong>Meddelanden:</strong><br />
