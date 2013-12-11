@@ -14,8 +14,8 @@ Min tanke är att göra en applikation som kombinerar texten till en låt med at
 Jag valde mellan att använda youtube, SoundCloud och Grooveshark till musikkällor. Det som fick mig att välja SoundCloud var att deras api var använt i flest mashup-applikationer på [programmableweb.com](http://www.programmableweb.com), samt att deras api-dokumentation var lättast att hitta i. Samma sak gäller för mitt val att använda LyricWiki för låttexter, och även att de erbjuder sin data i format jag gärna vill arbeta med.
 
 ### Dataformat
-SoundCloud: XML, Json, Jsonp
-LyricWiki: Text, HTML, XML, Json
+- SoundCloud: XML, Json, Jsonp
+- LyricWiki: Text, HTML, XML, Json
 
 ### Krav
 På SoundCloud måste man ha ett konto och registrera sin applikation för att få en key att arbeta med. LyricWiki har inga begränsningar eller krav vad jag lyckats hitta.
