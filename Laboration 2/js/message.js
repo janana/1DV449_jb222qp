@@ -1,7 +1,13 @@
 $( document ).ready( 
 	function() {
 		$("#logout").bind( "click", function() {
-		  	window.location = "index.php";
+		  	$.ajax({
+		  		type: "GET",
+		  		url: "functions.php",
+		  		data: {function: "logout"}
+		  	}).done(function(data) {
+		  		window.location = data;
+		  	});
 	 	});
 	}
 )
@@ -23,7 +29,11 @@ $( document ).ready(
 			  	url: "functions.php",
 			  	data: {function: "add", name: name_val, message: message_val, pid: pid}
 			}).done(function(data) {
-				$( "#mess_p_mess" ).prepend( "<p class='message_container'>" +message_val +"<br />Skrivet av: " +name_val +"</p>");
+				var output = data.split("<>");
+				if (output[0] != "" && output[1] != "") {
+					$( "#mess_p_mess" ).prepend( "<p class='message_container'>" + output[0] +"<br />Skrivet av: " + output[1] +"</p>");
+				}
+				
 			});
 		  
 	  });
@@ -94,7 +104,7 @@ $.ajax({
 		}).done(function(data) {
 			var j = JSON.parse(data);
 		//	console.log(j);
-			$( "#mess_p_mess" ).append( "<p class='message_container'>" +j.message +"<br />Skrivet av: " +j.name +"</p>");
+			$( "#mess_p_mess" ).prepend( "<p class='message_container'>" +j.message +"<br />Skrivet av: " +j.name +"</p>");
 	
 		});
 	});

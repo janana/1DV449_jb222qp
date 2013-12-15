@@ -113,7 +113,7 @@ function logout() {
 	if(!session_id()) {
 		sec_session_start();
 	}
-	session_end();
-	header('Location: index.php');
+	session_unset();
+	return "index.php";
 }
 

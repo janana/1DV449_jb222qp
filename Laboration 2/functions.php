@@ -8,9 +8,10 @@ sec_session_start();
 * It's here all the ajax calls goes
 */ 
 if(isset($_GET['function'])) {
-	
 	if($_GET['function'] == 'logout') {
-		logout();
+		
+		$location = logout();
+		echo $location;
     } elseif($_GET['function'] == 'add') {
        
 	    $name = $_GET["name"];
@@ -21,6 +22,7 @@ if(isset($_GET['function'])) {
 		$cleanMessage = strip_tags($message);
 		
 		addToDB($cleanName, $cleanMessage, $pid);
+		echo $cleanMessage . "<>" . $cleanName;
     }
     elseif($_GET['function'] == 'producers') {
     	$pid = $_GET["pid"];
