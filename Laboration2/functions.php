@@ -13,16 +13,20 @@ if(isset($_GET['function'])) {
 		$location = logout();
 		echo $location;
     } elseif($_GET['function'] == 'add') {
-       
-	    $name = $_GET["name"];
-		$message = $_GET["message"];
-		$pid = $_GET["pid"];
-		
-		$cleanName = strip_tags($name);
-		$cleanMessage = strip_tags($message);
-		
-		addToDB($cleanName, $cleanMessage, $pid);
-		echo $cleanMessage . "<>" . $cleanName;
+       try {
+			$name = $_GET["name"];
+			$message = $_GET["message"];
+			$pid = $_GET["pid"];
+			
+			$cleanName = strip_tags($name);
+			$cleanMessage = strip_tags($message);
+			addToDB($cleanName, $cleanMessage, $pid);
+			echo $cleanMessage . "<>" . $cleanName;
+				
+       } catch (Exception $e) {
+       		echo "Ett fel uppstod";
+       }
+	    
     }
     elseif($_GET['function'] == 'producers') {
     	$pid = $_GET["pid"];

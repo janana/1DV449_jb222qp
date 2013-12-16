@@ -1,0 +1,13 @@
+#map {
+	height: 800px;
+	
+}
+#container {
+	
+}
+#traffic {
+	border: 1px solid black;
+	height: 800px;
+	overflow: auto;
+	padding: 15px;
+}
