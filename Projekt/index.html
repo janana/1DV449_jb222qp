@@ -1,15 +1,32 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="sv">
+<!DOCTYPE html>
+<html lang="sv" >
 	<head>
 	    <meta charset="UTF-8" />
-		<title>Janinaeb</title>
+		<title>FoodGen</title>
 		<link href="css/bootstrap/bootstrap.min.css" type="text/css" rel="stylesheet" />
 		<link href="css/stylesheet.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
+		<div id="fb-root"> </div>
 		<div id="container" class="container">
-			<h1>Projekt</h1>
-			<fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>
+			
+			<div id="content"> </div>
+			
+			<div class="navbar navbar-default navbar-fixed-top">
+				<div class="navbar-header">
+					<a href="#" id="brand" class="navbar-brand">FoodGen</a>
+				</div>
+				<div class="navbar-collapse">
+						
+					<ul class="nav navbar-nav navbar-right">
+						<li><input type="button" value="Slumpa recept" class="btn" id="random-button" /></li>
+						<li>
+							<div id="fb"><div class="fb-login-button" data-width="250" data-max-rows="1" data-show-faces="true"> </div></div>
+							<a href="#" id="profile-button">Visa profil</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 		<script type="text/javascript" src="js/jquery-min.js"></script>
 		<script type="text/javascript" src="js/init.js"></script>

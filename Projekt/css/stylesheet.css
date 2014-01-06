@@ -1,0 +1,38 @@
+#content {
+	border: 1px solid #ddd;
+	background: #eee;
+	height: 1500px;
+	margin-top: 170px;
+}
+.padding {
+	padding: 10px 30px;
+}
+#fb {
+	padding: 23px 15px 0px 15px;
+}
+#random-button {
+	margin: 30px 30px 30px 15px;
+	padding: 11px;
+	font-size: 2em;
+}
+#profile-button {
+	margin: -40px 0px 0px 148px;
+}
+.brand {
+	font-size: 5em;
+	margin-left: 15px;
+}
+#brand {
+	font-size: 5em;
+	margin: 40px 0px 25px 15px;
+}
+#recipe-favour, #recipe-remove {
+	float: right;
+	margin: 20px 0px 5px 5px;
+}
+
+@media screen and (max-width: 850px){
+	#content {
+		margin-top: 350px;
+	}
+}
