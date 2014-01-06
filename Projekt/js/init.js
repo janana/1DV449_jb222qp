@@ -8,7 +8,6 @@ $(document).ready(function() {
 	// Save recipes in custom db for caching purposes
 	// Check query in url on startup for what page to enter
 	// Set custom query in url for each page
-	
 	// Custom db linked to user-db for information regarding recepies
 	// Disclude the disliked recipes from recipe-generation
 	
