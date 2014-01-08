@@ -1,38 +1,75 @@
+body {
+	font-family: 'Dosis', sans-serif;
+	font-size: 1.8em;
+}
 #content {
 	border: 1px solid #ddd;
-	background: #eee;
-	height: 1500px;
+	background: rgba(240, 240, 240, 0.8);
 	margin-top: 170px;
+	margin-bottom: 40px;
+	overflow: auto;
+}
+#footer {
+	border: 1px solid #ddd;
+	background: rgba(240, 240, 240, 0.8);
+	padding: 10px;
+	text-align: center;
+}
+.navbar {
+	background: rgba(215,215,215,0.5);
+	border-bottom: 1px solid #ddd;
+	color: black;
 }
 .padding {
 	padding: 10px 30px;
 }
 #fb {
-	padding: 23px 15px 0px 15px;
+	padding: 23px 15px 0px 30px;
 }
 #random-button {
-	margin: 30px 30px 30px 15px;
+	margin: 30px 30px 30px 30px;
 	padding: 11px;
 	font-size: 2em;
+	background: #8cc;
+	border: 1px solid #3bb;
 }
 #profile-button {
-	margin: -40px 0px 0px 148px;
-}
-.brand {
-	font-size: 5em;
-	margin-left: 15px;
+	margin: -40px 0px 0px 160px;
 }
 #brand {
+	padding-top: 30px;
+	font-family: 'Zeyada', cursive;
+	color: #3aa;
 	font-size: 5em;
 	margin: 40px 0px 25px 15px;
 }
 #recipe-favour, #recipe-remove {
 	float: right;
 	margin: 20px 0px 5px 5px;
+	font-size: 1em;
+}
+#fimage {
+	float: right;
+	max-height: 300px;
+	padding: 25px 10px;
+	margin-bottom: 10px;
+}
+#image {
+	float: right;
+	padding: 10px;
+}
+.portions {
+	font-style: italic;
 }
 
-@media screen and (max-width: 850px){
+@media screen and (max-width: 848px){
 	#content {
-		margin-top: 350px;
+		margin-top: 380px;
+	}
+	.navbar {
+		position: absolute;
+	}
+	#image {
+		float: none;
 	}
 }

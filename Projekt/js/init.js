@@ -8,6 +8,7 @@ $(document).ready(function() {
 	// Save recipes in custom db for caching purposes
 	// Check query in url on startup for what page to enter
 	// Set custom query in url for each page
+	
 	// Custom db linked to user-db for information regarding recepies
 	// Disclude the disliked recipes from recipe-generation
 	
@@ -61,17 +62,28 @@ $(document).ready(function() {
 	});
 });
 function generateRecipe() {
-	console.log("generera..");
 	$("#content").empty();
-	// Get recipes that are not disliked by user
-	// Generate random recipe from array
-	$("#content").append("<div id='recipe-div' class='padding'><input type='button' class='btn btn-default' value='Favorisera recept' id='recipe-favour' /><input type='button' class='btn btn-default' id='recipe-remove' value='Rata recept' /><h3>Recept</h3><p>Här kommer ett random recept från säsongsmats api visas!</p></div>");
+	$("#content").append("<div id='recipe-div' class='padding'><input type='button' class='btn btn-default' value='Favorisera recept' id='recipe-favour' /><input type='button' class='btn btn-default' id='recipe-remove' value='Rata recept' /></div>");
+	$.ajax({
+		type: "GET",
+		url: "recipe.php",
+		data: { funct: "getRandomUserRecipe", id: id, diet: diet }
+	}).done(function(data) {
+		$("#recipe-div").append(data);
+	});
 	
 	$("#recipe-remove").click(function() {
 		// Happens when recipe is removed from generator
+		var title = $("#title").text();
 		console.log("ratat");
-		alert("Receptet har ratats, och kommer inte visas igen. \n\nDu kan hantera ratade recept på din profil."); // TODO: Design/remove alerts
-		generateRecipe();
+		$.ajax({
+			type: "GET",
+			url: "recipe.php",
+			data: { funct: "recipeUserBan", id: id, title: title }
+		}).done(function(data) {
+			console.log("Receptet '"+data+"' har ratats, och kommer inte visas igen. \n\nDu kan hantera ratade recept på din profil."); // TODO: Design/remove alerts
+			generateRecipe();
+		});
 	});
 	$("#recipe-favour").click(function() {
 		// Happens when recipe is favoured from generator
@@ -153,7 +165,7 @@ function chooseDiet() {
 }
 function getFrontPage() {
 	$("#content").empty();
-	$("#content").append("<div class='padding'><h3>Välkommen till FoodGen!</h3><p>Om du loggar in med facebook kan du slumpa fram recept, favorisera, rata eller dela dem med dina vänner. Du kan även lista och hantera dina favoriserade eller ratade recept på din profil.</p></div>");
+	$("#content").append("<div class='padding'><img src='http://säsongsmat.nu//w/images/thumb/a/a9/346.JPG/300px-346.JPG' id='fimage' /><h3>Välkommen till FoodGen!</h3><p>Vid inloggning med facebook kan du slumpa fram recept, favorisera, rata eller dela dem med dina vänner. Du kan även lista och hantera dina favoriserade eller ratade recept på din profil.</p><p>Sidan hämtar recept från <a href='http://säsongsmat.nu/' target='_blank'>säsongsmat.nu</a>, så det är dit du bör vända dig om du vill lägga till recept som du saknar här! Recepten som läses in är ur kategorierna: Varmrätter, Förrätter och smårätter, Soppor och Sallader.</p></div>");
 }
 function getProfilePage() {
   	console.log(id+" "+name+" "+diet);
