@@ -207,4 +207,58 @@ class RecipeDAL extends DAL {
 	 	}
         return $return;
 	}
+	
+	/**
+	 * @return Array of recipeID's
+	 */
+	public function getUserLiked($userID) {
+		$sql = "SELECT RecipeID FROM RecipeUserComment WHERE UserID = ? && Comment = 'like'";
+        $prep = $this->connection->prepare($sql);
+        if ($prep == false) {
+            throw new Exception("prepare of [$sql] failed " . $this->connection->error);
+        }
+        $exec = $prep->bind_param("i", $userID);
+		if ($exec == false) {
+			throw new Exception("Bind param of [$sql] failed " . $prep->error);
+		}
+        $exec = $prep->execute();
+        if ($exec == false) {
+        	throw new Exception("execute of [$sql] failed " . $prep->error);
+        }
+
+        $exec = $prep->bind_result($recipeID);
+        if ($exec == false) {
+        	throw new Exception("execute of [$sql] failed " . $prep->error);
+        }
+
+        $return = array();
+
+	    while ($prep->fetch()) {
+	        $return[] = $recipeID;
+	 	}
+        return $return;
+	}
+	
+	/**
+	 * @param int userID
+	 * @param int recipeID
+	 */
+	public function deleteComment($userID, $recipeID) {
+		$sql = "DELETE FROM RecipeUserComment WHERE UserID = ? && RecipeID = ?";
+		
+		$prep = $this->connection->prepare($sql);
+        if ($prep == false) {
+            throw new Exception("prepare of [$sql] failed " . $this->connection->error);
+        }
+        $exec = $prep->bind_param("ii", $userID, $recipeID);
+		if ($exec == false) {
+			throw new Exception("Bind param of [$sql] failed " . $prep->error);
+		}
+        $exec = $prep->execute();
+        if ($exec == false) {
+        	throw new Exception("execute of [$sql] failed " . $prep->error);
+        }
+	}
+	
+	
 }

@@ -3,19 +3,11 @@ var diet = "";
 var id = "";
 
 $(document).ready(function() {
-	// Load recepies from säsongsmat api
 	// Add facebook buttons on each recipe SHARE
-	// Save recipes in custom db for caching purposes
 	// Check query in url on startup for what page to enter
 	// Set custom query in url for each page
-	
-	// Custom db linked to user-db for information regarding recepies
-	// Disclude the disliked recipes from recipe-generation
-	
-	// If I get time:	Add search function to recipes
-	//				  	Should users be able to log out from facebook on this site?
-	// 				  	Users can add their own recipes to the api or my own db  
-	//					Because the page isn't reloaded during run, logging out of facebook from another page wont effect this app
+	// Because the page isn't reloaded during run, logging out of facebook from another page wont effect this app
+	// Link to each recipe from favourite-recipe-page
 	
 	$("#profile-button").hide();
   	$("#random-button").hide();
@@ -46,14 +38,13 @@ $(document).ready(function() {
  		ref.parentNode.insertBefore(js, ref);
 	}(document));
 	
-	
 	$("#random-button").click(function(e) {
 		generateRecipe();
 		
 		e.preventDefault();
 	});
 	$("#profile-button").click(function(e) {
-		getProfilePage(id, name, diet);
+		getProfilePage();
 		e.preventDefault();
 	});
 	$("#brand").click(function(e) {
@@ -61,35 +52,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 });
-function generateRecipe() {
-	$("#content").empty();
-	$("#content").append("<div id='recipe-div' class='padding'><input type='button' class='btn btn-default' value='Favorisera recept' id='recipe-favour' /><input type='button' class='btn btn-default' id='recipe-remove' value='Rata recept' /></div>");
-	$.ajax({
-		type: "GET",
-		url: "recipe.php",
-		data: { funct: "getRandomUserRecipe", id: id, diet: diet }
-	}).done(function(data) {
-		$("#recipe-div").append(data);
-	});
-	
-	$("#recipe-remove").click(function() {
-		// Happens when recipe is removed from generator
-		var title = $("#title").text();
-		console.log("ratat");
-		$.ajax({
-			type: "GET",
-			url: "recipe.php",
-			data: { funct: "recipeUserBan", id: id, title: title }
-		}).done(function(data) {
-			console.log("Receptet '"+data+"' har ratats, och kommer inte visas igen. \n\nDu kan hantera ratade recept på din profil."); // TODO: Design/remove alerts
-			generateRecipe();
-		});
-	});
-	$("#recipe-favour").click(function() {
-		// Happens when recipe is favoured from generator
-		console.log("gillat");
-	});
-}
+
 function runApplication() {
 	FB.api('/me', function(response) {
 		try {
@@ -122,6 +85,45 @@ function runApplication() {
 		} catch (exception) {
 			alert("Ett oväntat fel inträffade."); // Add better error-handling
 		}
+	});
+}
+function generateRecipe() {
+	$("#content").empty();
+	$("#content").append("<div id='recipe-div' class='padding'><input type='button' class='btn btn-default' value='Favorisera recept' id='recipe-favour' /><input type='button' class='btn btn-default' id='recipe-remove' value='Rata recept' /></div>");
+	$.ajax({
+		type: "GET",
+		url: "recipe.php",
+		data: { funct: "getRandomUserRecipe", id: id, diet: diet }
+	}).done(function(data) {
+		$("#recipe-div").append(data);
+	});
+	
+	$("#recipe-remove").click(function() {
+		// Happens when recipe is removed from generator
+		var recipeID = $("#recipeID").val();
+		$.ajax({
+			type: "GET",
+			url: "recipe.php",
+			data: { funct: "recipeUserBan", id: id, recipeID: recipeID }
+		}).done(function(data) {
+			if (data != "") {
+				alert("Receptet '"+data+"' har ratats, och kommer inte visas igen. \n\nDu kan hantera ratade recept på din profil."); // TODO: Design/remove alerts
+				generateRecipe();
+			}
+		});
+	});
+	$("#recipe-favour").click(function() {
+		// Happens when recipe is favoured from generator
+		var recipeID = $("#recipeID").val();
+		$.ajax({
+			type: "GET",
+			url: "recipe.php",
+			data: { funct: "recipeUserFavour", id: id, recipeID: recipeID }
+		}).done(function(data) {
+			if (data != "") {
+				alert("Receptet '"+data+"' har favoriserats. \n\nDu kan hantera favoriserade recept på din profil."); // TODO: Design/remove alerts
+			}
+		});
 	});
 }
 function chooseDiet() {
@@ -170,10 +172,86 @@ function getFrontPage() {
 function getProfilePage() {
   	console.log(id+" "+name+" "+diet);
 	$("#content").empty();
-	$("#content").append("<div id='profile-div' class='padding'><h3>Profil</h3><p>Här kan du ändra dina inställningar och visa listor på recept du favoriserat eller ratat</p><br/><p><a href='#' id='change-diet'>Ändra kostinställning</a></p><p>Visa favoritrecept</p><p>Visa ratade recept</p></div>");
+	$("#content").append("<div id='profile-div' class='padding'><h3>Profil</h3><p>Här kan du ändra dina inställningar och visa listor på recept du favoriserat eller ratat</p><br/><p><a href='#' id='change-diet'>Ändra kostinställning</a></p><p><a id='manage-favoured' href='#'>Visa favoritrecept</a></p><p><a id='manage-removed' href='#'>Visa ratade recept</a></p><br><p><a id='logout-button' href='#'>Logga ut</a></p></div>");
 	$("#change-diet").click(function(e) {
 		chooseDiet();
 		e.preventDefault();
 	});
-	  	
+	$("#logout-button").click(function(e) {
+		FB.logout(function() {
+        	window.location = "../Projekt/";
+   		});
+		e.preventDefault();
+	});
+	var backLink = "<a id='back' href='#'>Tillbaka till profil</a>";
+	$("#manage-favoured").click(function(e) {
+		$.ajax({
+			type: "GET",
+			url: "recipe.php",
+			data: { funct: "recipeGetFavoured", id: id }
+		}).done(function(data) {
+			$("#content").empty();
+			$("#content").append("<div class='padding'><h3>Hantera favoritrecept</h3><p>Klicka på krysset vid receptet för att ta bort favorisering av receptet.</p>"+data+"<br>"+backLink+"</div>");
+			$(".disfavour-link").click(function(e) {
+				var href = $(this).attr("href");
+				var recipeID = href.replace(/^\D+/g, "");
+				if (recipeID != "") {
+					$.ajax({
+						type: "GET",
+						url: "recipe.php",
+						data: { funct: "recipeUserRemoveComment", id: id, recipeID: recipeID }
+					}).done(function(data) {
+						if (data == "Deleted") {
+							alert("Borttagen!"); 
+							getProfilePage();
+						} else {
+							console.log(data); // Something went wrong
+						}
+					});
+				}
+				e.preventDefault();
+			});
+			$("#back").click(function(e) {
+				$("#content").empty();
+				getProfilePage();
+				e.preventDefault();			
+			});
+		});
+		e.preventDefault();
+	});
+	$("#manage-removed").click(function(e) {
+		$.ajax({
+			type: "GET",
+			url: "recipe.php",
+			data: { funct: "recipeGetBanned", id: id }
+		}).done(function(data) {
+			$("#content").empty();
+			$("#content").append("<div class='padding'><h3>Hantera ratade recept</h3><p>Klicka på krysset vid receptet för att häva ratandet av receptet.</p>"+data+"<br>"+backLink+"</div>");
+			$(".disban-link").click(function(e) {
+				var href = $(this).attr("href");
+				var recipeID = href.replace(/^\D+/g, "");
+				if (recipeID != "") {
+					$.ajax({
+						type: "GET",
+						url: "recipe.php",
+						data: { funct: "recipeUserRemoveComment", id: id, recipeID: recipeID }
+					}).done(function(data) {
+						if (data == "Deleted") {
+							alert("Borttagen!"); 
+							getProfilePage();
+						} else {
+							console.log(data); // Something went wrong
+						}
+					});
+				}
+				e.preventDefault();
+			});
+			$("#back").click(function(e) {
+				$("#content").empty();
+				getProfilePage();
+				e.preventDefault();			
+			});
+		});
+		e.preventDefault();
+	});
 }

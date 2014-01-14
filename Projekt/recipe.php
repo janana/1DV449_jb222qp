@@ -4,14 +4,21 @@ require_once("db/config.php");
 require_once("db/DAL.php");
 require_once("db/RecipeDAL.php");
 
-
 error_reporting(E_ALL);
 
 // Handle recipes in db
 
 $recipeDAL = new RecipeDAL();
 $savedRecipes = $recipeDAL->getRecipes(); // Without category and ingredients
-
+$format = "d-m-y";
+$todaysDate = date($format);
+$isUpdateTime = false;
+$savedDate = file_get_contents("updateRecipe.txt");
+if ($savedDate != $todaysDate) {
+	// Time to update recipes
+	$isUpdateTime = true;
+	file_put_contents("updateRecipe.txt", $todaysDate);
+}
 
 /**
  * CategoryID:
@@ -25,7 +32,7 @@ $savedRecipes = $recipeDAL->getRecipes(); // Without category and ingredients
   * like
   */
  
-if ($_GET["funct"] == "getNew") {
+if ($isUpdateTime) {
 	// Get the recipes from säsongsmat website
 	$domain = "http://xn--ssongsmat-v2a.nu/";
 	
@@ -72,6 +79,7 @@ if ($_GET["funct"] == "getNew") {
 						$portions = " ";
 						if ($portionsNode->length > 0) {
 							$portions = $portionsNode->item(0)->nodeValue;
+							$portions = str_replace("â€“", "", $portions);
 						}
 					
 						// Instructions
@@ -148,17 +156,19 @@ if ($_GET["funct"] == "getNew") {
 	} else {
 		echo "Fel inträffade när recepten skulle läsas in från apiet";
 	} 
-} else if ($_GET["funct"] == "getRandomUserRecipe") {
+}
+
+if ($_GET["funct"] == "getRandomUserRecipe") {
 	$id = $_GET["id"];
 	$diet = $_GET["diet"];
-	// Get all OK recipes by sorting through bad ones
-	$badRecipes = array();
+	
+	$okRecipes = array();
 	$vegRecipes = array();
 	if ($diet !== "all") {
-		// run through recipe categories
-		if ($diet = "veg") { // Vegetarian
+		// Run through recipe categories
+		if ($diet = "veg") { 	// Vegetarian
 			$vegRecipeIDs = $recipeDAL->getRecipeCategories(5);
-		} else { // Vegan
+		} else { 				// Vegan
 			$vegRecipeIDs = $recipeDAL->getRecipeCategories(6);
 		}
 		foreach($vegRecipeIDs as $vegID) {
@@ -170,32 +180,37 @@ if ($_GET["funct"] == "getNew") {
 		}
 	}
 	$dislikedIds = $recipeDAL->getUserDisliked($id);
-	
-	foreach($dislikedIds as $disliked) {
-		if ($diet == "all") {
-			foreach($savedRecipes as $recipe) {
+	if ($diet == "all") {
+		foreach($savedRecipes as $recipe) {
+			$isBad = false;
+			foreach ($dislikedIds as $disliked) {
 				if ($recipe["recipeID"] == $disliked) {
-					$badRecipes[] = $recipe;
+					$isBad = true;
 				}
 			}
-		} else {
-			foreach($vegRecipes as $recipe) {
-				if ($recipe["recipeID"] == $disliked) {
-					$badRecipes[] = $recipe;
-				}
+			if (!$isBad) {
+				$okRecipes[] = $recipe;
 			}
 		}
-	}
-	$okRecipes = array_diff($savedRecipes, $badRecipes);
-	if ($diet != "all") {
-		$okRecipes = array_diff($vegRecipes, $badRecipes);		
+	} else {
+		foreach($vegRecipes as $recipe) {
+			$isBad = false;
+			foreach ($dislikedIds as $disliked) {
+				if ($recipe["recipeID"] == $disliked) {
+					$isBad = true;
+				}
+			}
+			if (!$isBad) {
+				$okRecipes[] = $recipe;
+			}
+		}
 	}
 	$randomIndex = array_rand($okRecipes);
 	$randomRecipe = $okRecipes[$randomIndex];
 	$randomRecipe["ingredients"] = $recipeDAL->getIngredients($randomRecipe["recipeID"]);
 	
 	
-	$html = "<h3 id='title'>".$randomRecipe['title']."</h3>
+	$html = "<input type='hidden' id='recipeID' value='".$randomRecipe['recipeID']."' /><h3 id='title'>".$randomRecipe['title']."</h3>
 				<p class='portions'>".$randomRecipe['portions']."</p>";
 	if ($randomRecipe["pic"] != "-") {
 		$html .= "<img id='image' src='".$randomRecipe['pic']."' />";
@@ -206,7 +221,7 @@ if ($_GET["funct"] == "getNew") {
 	$html .= "<br/><div class='instruction'>".$randomRecipe["instruction"]."</div>";
 	$html = str_replace("[", "", $html);
 	$html = str_replace("]", "", $html);
-	
+	$html = str_replace("â€“", "", $html);
 	$html = iconv('UTF-8', "ISO-8859-1", $html); // Encodes åäö
 	//$html = str_replace("�", " ", $html);
 	// TODO: fix �-icons!!!
@@ -214,10 +229,10 @@ if ($_GET["funct"] == "getNew") {
 
 } else if ($_GET["funct"] == "recipeUserBan") {
 	$id = $_GET["id"];
-	$title = $_GET["title"];
+	$recipeID = $_GET["recipeID"];
 	$savedRecipe = "";
 	foreach ($savedRecipes as $recipe) {
-		if ($recipe["title"] == $title) {
+		if ($recipe["recipeID"] == $recipeID) {
 			$savedRecipe = $recipe;
 		}
 	}
@@ -227,10 +242,67 @@ if ($_GET["funct"] == "getNew") {
 	}
 	
 } else if ($_GET["funct"] == "recipeUserFavour") {
+	$id = $_GET["id"];
+	$recipeID = $_GET["recipeID"];
+	$savedRecipe = "";
+	foreach ($savedRecipes as $recipe) {
+		if ($recipe["recipeID"] == $recipeID) {
+			$savedRecipe = $recipe;
+		}
+	}
+	if ($savedRecipe != "") {
+		$recipeDAL->addComment($id, $savedRecipe["recipeID"], "like");
+		echo $savedRecipe["title"];
+	}
 	
 } else if ($_GET["funct"] == "recipeUserRemoveComment") {
+	$id = $_GET["id"];
+	$recipeID = $_GET["recipeID"];
 	
-} 
+	try {
+		$recipeDAL->deleteComment($id, $recipeID);
+		echo "Deleted";
+	} catch (Exception $e){
+		echo "Error occured: ".$e;
+	}
+	
+	
+	
+} else if ($_GET["funct"] == "recipeGetBanned") {
+	$id = $_GET["id"];
+	$bannedIDs = $recipeDAL->getUserDisliked($id);
+	if (count($bannedIDs) > 0) {
+		$html = "<ul class='list-unstyled'>";
+		foreach ($bannedIDs as $banned) {
+			foreach ($savedRecipes as $recipe) {
+				if ($recipe["recipeID"] == $banned) {
+					$html .= "<li><a class='disban-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> ".$recipe['title']."</li>";
+				}
+			}
+		}
+		$html .= "</ul>";
+		echo $html; 
+	} else {
+		echo "Det finns inga ratade recept.";
+	}
+} else if ($_GET["funct"] == "recipeGetFavoured") {
+	$id = $_GET["id"];
+	$favouredIDs = $recipeDAL->getUserLiked($id);
+	if (count($favouredIDs) > 0) {
+		$html = "<ul class='list-unstyled'>";
+		foreach ($favouredIDs as $favoured) {
+			foreach ($savedRecipes as $recipe) {
+				if ($recipe["recipeID"] == $favoured) {
+					$html .= "<li><a class='disfavour-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> ".$recipe['title']."</li>";
+				}
+			}
+		}
+		$html .= "</ul>";
+		echo $html; 
+	} else {
+		echo "Det finns inga favoriserade recept.";
+	}
+}
 
 
 
@@ -248,7 +320,7 @@ function getPageFromURL($url) {
 	return $output;
 }
 function getQuery($page, $query) {
-	$dom = new DOMDocument();
+	$dom = new DOMDocument('1.0', 'UTF-8');
 	if ($dom->loadHTML($page)) { 
 		$x = new DOMXPath($dom);
 		return $x->query($query);
@@ -256,3 +328,4 @@ function getQuery($page, $query) {
 
 	throw new Exception("Could not load HTML from page");
 }
+
