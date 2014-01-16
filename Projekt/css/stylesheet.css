@@ -43,10 +43,20 @@ body {
 	font-size: 5em;
 	margin: 40px 0px 25px 15px;
 }
-#recipe-favour, #recipe-remove {
+#recipe-favour, #recipe-remove, #share-button {
 	float: right;
 	margin: 20px 0px 5px 5px;
 	font-size: 1em;
+	padding-left: 37px;
+}
+#recipe-favour {
+	background: url("sprites.png") no-repeat 6px 6px;
+}
+#recipe-remove {
+	background: url("sprites.png") no-repeat 6px -30px;
+}
+#share-button {
+	background:  url("sprites.png") no-repeat 6px -72px;
 }
 #fimage {
 	float: right;
@@ -56,8 +66,20 @@ body {
 }
 #image {
 	float: right;
-	margin-top: 10px;
 	padding: 10px;
+}
+.disfavour-link, .disban-link {
+	border: 1px solid gray;
+	padding: 0 7px;
+	margin: 1px 5px 1px 0;
+	display: inline-block;
+	width: 26px;
+	color: gray;
+}
+a.disfavour-link:hover, a.disban-link:hover {
+	text-decoration: none;
+	color: black;
+	border: 1px solid black;
 }
 .portions {
 	font-style: italic;

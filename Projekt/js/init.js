@@ -3,15 +3,10 @@ var diet = "";
 var id = "";
 
 $(document).ready(function() {
-	// Add facebook buttons on each recipe SHARE
-	// Check query in url on startup for what page to enter
-	// Set custom query in url for each page
 	// Because the page isn't reloaded during run, logging out of facebook from another page wont effect this app
-	// Link to each recipe from favourite-recipe-page
 	
 	$("#profile-button").hide();
   	$("#random-button").hide();
-  	getFrontPage();
   	
 	window.fbAsyncInit = function() {
 		FB.init({
@@ -34,21 +29,38 @@ $(document).ready(function() {
  		var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
  		if (d.getElementById(id)) {return;}
  		js = d.createElement('script'); js.id = id; js.async = true;
- 		js.src = "//connect.facebook.net/en_US/all.js";
+ 		js.src = "//connect.facebook.net/sv_SE/all.js";
  		ref.parentNode.insertBefore(js, ref);
 	}(document));
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/sv_SE/all.js#xfbml=1&appId=574244782654416";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
 	
+	query = getQueryString();
+	if (query == "profile") {
+		getProfilePage();
+	} else if (query != "") {
+		showRecipe(query);
+	} else {
+		getFrontPage();
+	}
+	
+	// Set click-events
 	$("#random-button").click(function(e) {
 		generateRecipe();
 		
 		e.preventDefault();
 	});
 	$("#profile-button").click(function(e) {
-		getProfilePage();
+		setQueryString("profile");
 		e.preventDefault();
 	});
 	$("#brand").click(function(e) {
-		getFrontPage();
+		setQueryString("");
 		e.preventDefault();
 	});
 });
@@ -63,21 +75,18 @@ function runApplication() {
 				data: { funct: "addUser", name: response.name, id: response.id }
 			}).done(function(data) {
 				var str = data.split(";");
-				if (str[0] == "User found") {
+				if (str[0] == "User found" || data == "User saved") {
 					$("#profile-button").show();
 					$("#random-button").show();
-					
-					diet = str[1];
-					name = response.name;
-					id = response.id;
-					getFrontPage();
-				} else if (data == "User saved") {	// New user, need to init diet to db
-					$("#profile-button").show();
-					$("#random-button").show();
-					
-					name = response.name;
-					id = response.id;
-					chooseDiet();
+					if (str[0] == "User found") {	
+						diet = str[1];
+						name = response.name;
+						id = response.id;
+					} else {				// New user, need to init diet to db
+						name = response.name;
+						id = response.id;
+						chooseDiet();
+					}
 				} else {
 					console.log(data); // Something is wrong
 				}
@@ -88,42 +97,17 @@ function runApplication() {
 	});
 }
 function generateRecipe() {
-	$("#content").empty();
-	$("#content").append("<div id='recipe-div' class='padding'><input type='button' class='btn btn-default' value='Favorisera recept' id='recipe-favour' /><input type='button' class='btn btn-default' id='recipe-remove' value='Rata recept' /></div>");
 	$.ajax({
 		type: "GET",
 		url: "recipe.php",
-		data: { funct: "getRandomUserRecipe", id: id, diet: diet }
+		data: { funct: "getRandomUserRecipeID", id: id, diet: diet }
 	}).done(function(data) {
-		$("#recipe-div").append(data);
-	});
-	
-	$("#recipe-remove").click(function() {
-		// Happens when recipe is removed from generator
-		var recipeID = $("#recipeID").val();
-		$.ajax({
-			type: "GET",
-			url: "recipe.php",
-			data: { funct: "recipeUserBan", id: id, recipeID: recipeID }
-		}).done(function(data) {
-			if (data != "") {
-				alert("Receptet '"+data+"' har ratats, och kommer inte visas igen. \n\nDu kan hantera ratade recept på din profil."); // TODO: Design/remove alerts
-				generateRecipe();
-			}
-		});
-	});
-	$("#recipe-favour").click(function() {
-		// Happens when recipe is favoured from generator
-		var recipeID = $("#recipeID").val();
-		$.ajax({
-			type: "GET",
-			url: "recipe.php",
-			data: { funct: "recipeUserFavour", id: id, recipeID: recipeID }
-		}).done(function(data) {
-			if (data != "") {
-				alert("Receptet '"+data+"' har favoriserats. \n\nDu kan hantera favoriserade recept på din profil."); // TODO: Design/remove alerts
-			}
-		});
+		if (data != "Error") {
+			window.location.href = "?recipeID="+data;
+		} else {
+			$("#content").empty();
+			$("#content").append("<div class='padding'><p>Ett fel inträffade och det gick inte att hämta receptet.</p></div>");
+		}
 	});
 }
 function chooseDiet() {
@@ -167,7 +151,7 @@ function chooseDiet() {
 }
 function getFrontPage() {
 	$("#content").empty();
-	$("#content").append("<div class='padding'><img src='http://säsongsmat.nu//w/images/thumb/a/a9/346.JPG/300px-346.JPG' id='fimage' /><h3>Välkommen till FoodGen!</h3><p>Vid inloggning med facebook kan du slumpa fram recept, favorisera, rata eller dela dem med dina vänner. Du kan även lista och hantera dina favoriserade eller ratade recept på din profil.</p><p>Sidan hämtar recept från <a href='http://säsongsmat.nu/' target='_blank'>säsongsmat.nu</a>, så det är dit du bör vända dig om du vill lägga till recept som du saknar här! Recepten som läses in är ur kategorierna: Varmrätter, Förrätter och smårätter, Soppor och Sallader.</p></div>");
+	$("#content").append("<div class='padding'><img src='http://säsongsmat.nu//w/images/thumb/a/a9/346.JPG/300px-346.JPG' id='fimage' /><h3>Välkommen till FoodGen!</h3><p>Vid inloggning med facebook kan du slumpa fram recept, rata, favorisera (om du vill spara undan receptet utan att rata det) eller dela dem med dina vänner. Du kan även lista och hantera dina favoriserade och ratade recept på din profil.</p><p>Sidan hämtar recept från <a href='http://säsongsmat.nu/' target='_blank'>säsongsmat.nu</a>, så det är dit du bör vända dig om du vill lägga till recept som du saknar här! Recepten som läses in är ur kategorierna: Varmrätter, Förrätter och smårätter, Soppor och Sallader.</p></div>");
 }
 function getProfilePage() {
   	console.log(id+" "+name+" "+diet);
@@ -254,4 +238,85 @@ function getProfilePage() {
 		});
 		e.preventDefault();
 	});
+}
+function showRecipe(recipeID) {
+	$.ajax({
+		type: "GET",
+		url: "recipe.php",
+		data: { funct: "getRecipeByID", recipeID: recipeID }
+	}).done(function(data) {
+		if (data != "Error") {
+			$("#content").empty();
+			var recipe = $.parseJSON(data); 
+			
+			var shareButton = "<a id='fb-link' target='_blank' href='https://www.facebook.com/sharer/sharer.php?u="+window.location+"'><input type='button' id='share-button' class='btn btn-default' value='Dela på facebook'></input></a><div style='display:none;'> <![CDATA[ <!--OpenGraph section--> <meta property='og:title' content='"+recipe.title+"' /><meta property='og:url' content='"+window.location+"' /><meta property='og:site_name' content='FoodGen' /><meta property='og:image' content='"+recipe.pic+"' /><meta property='fb:app_id' content='574244782654416' />]]> </div>";
+			$("#content").append("<div id='recipe-div' class='padding'><input type='button' class='btn btn-default' value='Favorisera recept' id='recipe-favour' /><input type='button' class='btn btn-default' id='recipe-remove' value='Rata recept' />"+shareButton+"</div>");
+
+			var html = "";
+			document.title = "FoodGen - "+ recipe.title;
+			html += "<input type='hidden' id='recipeID' value='"+recipe.recipeID+"' /><h3 id='title'>"+recipe.title+"</h3><p class='portions'>"+recipe.portions+"</p><br/>";
+			if (recipe.pic != "-") {
+				html += "<img id='image' src='"+recipe.pic+"' />";
+			}
+			$.each(recipe.ingredients, function(index, ingredient) {
+				html += "<p>"+ingredient+"</p>";
+			});
+			html += "<br/><div class='instruction'>"+recipe.instruction+"</div>";
+			html = html.replace("[", "");
+			html = html.replace("]", "");
+			
+			$("#recipe-div").append(html);
+			
+			$("#recipe-remove").click(function() {
+				// Happens when recipe is removed from generator
+				var recipeID = $("#recipeID").val();
+				$.ajax({
+					type: "GET",
+					url: "recipe.php",
+					data: { funct: "recipeUserBan", id: id, recipeID: recipeID }
+				}).done(function(data) {
+					if (data != "Error") {
+						$("#content").prepend("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Receptet '"+data+"' har ratats, och kommer inte visas igen. Du kan hantera ratade recept på din profil.</div>");
+						generateRecipe();
+					} else {
+						alert("Ett fel inträffade, det gick inte att rata receptet.");
+					}
+				});
+			});
+			$("#recipe-favour").click(function() {
+				// Happens when recipe is favoured from generator
+				var recipeID = $("#recipeID").val();
+				$.ajax({
+					type: "GET",
+					url: "recipe.php",
+					data: { funct: "recipeUserFavour", id: id, recipeID: recipeID }
+				}).done(function(data) {
+					if (data != "") {
+						alert("Receptet '"+data+"' har favoriserats. \n\nDu kan hantera favoriserade recept på din profil."); // TODO: Design/remove alerts
+					}
+				});
+			});
+		} else {
+			$("#content").empty();
+			$("#content").append("<div class='padding'><p>Ett fel inträffade och det gick inte att hämta receptet.</p></div>");
+		}
+	});
+}
+
+function setQueryString(query) {
+	window.location.href = "?"+query;
+}
+function getQueryString() {
+	var query = window.location.search;
+	query = query.match(/\?(.)*/);
+	if (query != null) {
+		query = query[0].replace("?", "");
+		if (query == "profile") {
+			return query;
+		}
+		if (/recipeID/.test(query)) {
+			return query.replace("recipeID=", "");
+		}
+	}
+	return "";
 }

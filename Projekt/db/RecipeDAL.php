@@ -117,6 +117,37 @@ class RecipeDAL extends DAL {
 	 	}
         return $return;
 	}
+	public function getRecipeByID($recipeID) {
+		$sql = "SELECT * FROM Recipe WHERE RecipeID = ?";
+        $prep = $this->connection->prepare($sql);
+        if ($prep == false) {
+            throw new Exception("prepare of [$sql] failed " . $this->connection->error);
+        }
+        $exec = $prep->bind_param("i", $recipeID);
+		if ($exec == false) {
+			throw new Exception("Bind param of [$sql] failed " . $prep->error);
+		}
+        $exec = $prep->execute();
+        if ($exec == false) {
+        	throw new Exception("execute of [$sql] failed " . $prep->error);
+        }
+
+        $exec = $prep->bind_result($recipeID, $title, $pic, $portions, $instruction);
+        if ($exec == false) {
+        	throw new Exception("execute of [$sql] failed " . $prep->error);
+        }
+		$return = "";
+	    while ($prep->fetch()) {
+	        $return = array("recipeID" => $recipeID,
+							"title" => $title,
+							"pic" => $pic,
+							"portions" => $portions,
+							"instruction" => $instruction);
+	 	}
+        return $return;
+	}
+	
+	
 	/**
 	 * @return Array of recipeIDs with category from categoryID
 	 */

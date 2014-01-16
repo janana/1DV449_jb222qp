@@ -10,6 +10,7 @@ error_reporting(E_ALL);
 
 $recipeDAL = new RecipeDAL();
 $savedRecipes = $recipeDAL->getRecipes(); // Without category and ingredients
+
 $format = "d-m-y";
 $todaysDate = date($format);
 $isUpdateTime = false;
@@ -46,10 +47,10 @@ if ($isUpdateTime) {
 		for ($i = 0; $i < $links->length; $i++) {
 			$categLink = $categLinks->item($i)->childNodes->item(1);
 			
-			if ($categLink->nodeValue == "VarmrÃ¤tter" ||
+			if ($categLink->nodeValue == "Varmrätter" ||
 				$categLink->nodeValue == "Sallader" ||
 				$categLink->nodeValue == "Soppor" ||
-				$categLink->nodeValue == "FÃ¶rrÃ¤tter och smÃ¥rÃ¤tter") {
+				$categLink->nodeValue == "Förrätter och smårätter") {
 					
 				$title = $links->item($i)->nodeValue;
 				// Test if new recipes exist, if it's new, extract info and add to db
@@ -83,12 +84,10 @@ if ($isUpdateTime) {
 						}
 					
 						// Instructions
-						$instructionNodes = getQuery($recipePage, "//p");
+						$instructionNodes = getQuery($recipePage, "//p[(not(@itemprop = 'recipeCategory') and not(./*[1][local-name() = 'br']) and not(./*[1][local-name() = 'i']) )] | //ol"); 
 						$instruction = "";
 						for ($k = 0; $k < $instructionNodes->length; $k++) {
-							if ($k >= 4) {
-								$instruction .= $instructionNodes->item($k)->nodeValue ."<br/>";
-							}
+							$instruction .= $instructionNodes->item($k)->nodeValue ."<br/>";
 						}
 						if ($instruction == "") {
 							$instruction = "-";
@@ -158,7 +157,7 @@ if ($isUpdateTime) {
 	} 
 }
 
-if ($_GET["funct"] == "getRandomUserRecipe") {
+if ($_GET["funct"] == "getRandomUserRecipeID") {
 	$id = $_GET["id"];
 	$diet = $_GET["diet"];
 	
@@ -207,26 +206,26 @@ if ($_GET["funct"] == "getRandomUserRecipe") {
 	}
 	$randomIndex = array_rand($okRecipes);
 	$randomRecipe = $okRecipes[$randomIndex];
-	$randomRecipe["ingredients"] = $recipeDAL->getIngredients($randomRecipe["recipeID"]);
+	if ($randomRecipe["recipeID"] != "") {
+		echo $randomRecipe["recipeID"];
+	} else {
+		echo "Error";
+	}
+} else if ($_GET["funct"] == "getRecipeByID") {
+	try {
+		$recipeID = $_GET["recipeID"];
+		$recipe = $recipeDAL->getRecipeByID($recipeID);
+		$recipe["ingredients"] = $recipeDAL->getIngredients($recipeID);
+		if ($recipe != null) {
+			echo json_encode($recipe);
+		} else {
+			echo "Error";
+		}
+	} catch (Exception $e) {
+		echo "Error";
+	}
 	
 	
-	$html = "<input type='hidden' id='recipeID' value='".$randomRecipe['recipeID']."' /><h3 id='title'>".$randomRecipe['title']."</h3>
-				<p class='portions'>".$randomRecipe['portions']."</p>";
-	if ($randomRecipe["pic"] != "-") {
-		$html .= "<img id='image' src='".$randomRecipe['pic']."' />";
-	}
-	foreach($randomRecipe["ingredients"] as $ingredient) {
-		$html .= "<p>".$ingredient."</p>";
-	}
-	$html .= "<br/><div class='instruction'>".$randomRecipe["instruction"]."</div>";
-	$html = str_replace("[", "", $html);
-	$html = str_replace("]", "", $html);
-	$html = str_replace("â€“", "", $html);
-	$html = iconv('UTF-8', "ISO-8859-1", $html); // Encodes åäö
-	//$html = str_replace("�", " ", $html);
-	// TODO: fix �-icons!!!
-	echo $html;
-
 } else if ($_GET["funct"] == "recipeUserBan") {
 	$id = $_GET["id"];
 	$recipeID = $_GET["recipeID"];
@@ -239,6 +238,8 @@ if ($_GET["funct"] == "getRandomUserRecipe") {
 	if ($savedRecipe != "") {
 		$recipeDAL->addComment($id, $savedRecipe["recipeID"], "dislike");
 		echo $savedRecipe["title"];
+	} else {
+		echo "Error";
 	}
 	
 } else if ($_GET["funct"] == "recipeUserFavour") {
@@ -276,7 +277,7 @@ if ($_GET["funct"] == "getRandomUserRecipe") {
 		foreach ($bannedIDs as $banned) {
 			foreach ($savedRecipes as $recipe) {
 				if ($recipe["recipeID"] == $banned) {
-					$html .= "<li><a class='disban-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> ".$recipe['title']."</li>";
+					$html .= "<li><a class='disban-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> <a href='?recipeID=".$recipe["recipeID"]."'>".$recipe['title']."</a></li>";
 				}
 			}
 		}
@@ -293,7 +294,7 @@ if ($_GET["funct"] == "getRandomUserRecipe") {
 		foreach ($favouredIDs as $favoured) {
 			foreach ($savedRecipes as $recipe) {
 				if ($recipe["recipeID"] == $favoured) {
-					$html .= "<li><a class='disfavour-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> ".$recipe['title']."</li>";
+					$html .= "<li><a class='disfavour-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> <a href=?recipeID=".$recipe["recipeID"].">".$recipe['title']."</a></li>";
 				}
 			}
 		}
@@ -320,7 +321,10 @@ function getPageFromURL($url) {
 	return $output;
 }
 function getQuery($page, $query) {
-	$dom = new DOMDocument('1.0', 'UTF-8');
+	$dom = new DOMDocument("1.0", "utf-8");
+	$page = mb_convert_encoding($page, 'utf-8', mb_detect_encoding($page));
+	$page = mb_convert_encoding($page, 'html-entities', 'utf-8'); 
+	
 	if ($dom->loadHTML($page)) { 
 		$x = new DOMXPath($dom);
 		return $x->query($query);
