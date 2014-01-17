@@ -78,12 +78,14 @@ Receptinformationen skrapas från [säsongsmats hemsida](säsongsmat.nu), från 
 #### Cachning
 Jag har satt, i .htaccess-filen, att javascript och css cachas i 30 dagar efter att filen senast blev ändrad. Bilder är satta till 90 dagar. 
 
-```ExpiresActive On
-```ExpiresByType application/javascript M2592000
-```ExpiresByType text/javascript M2592000
-```ExpiresByType text/css M2592000
-```ExpiresByType image/jpg M7776000
-```ExpiresByType image/png M7776000
+```
+ExpiresActive On
+ExpiresByType application/javascript M2592000
+ExpiresByType text/javascript M2592000
+ExpiresByType text/css M2592000
+ExpiresByType image/jpg M7776000
+ExpiresByType image/png M7776000
+```
 
 
 HTML och text bör inte cachas då HTML-sidan ändras dynamiskt hela tiden, speciellt när man genererar recept. En text-fil används för att lagra senaste datum recept-databasen uppdaterades, så därför kan inte den cachas då den ändras varje dag någon besöker hemsidan.
