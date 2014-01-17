@@ -12,7 +12,43 @@ Nästan varje dag ställs jag inför ett jobbigt beslut - vad ska jag äta idag?
 
 Min applikation tar recept från [säsongsmat.nu] och visar ett slumpat för användaren. Användaren kan därefter välja att dela receptet på facebook, favorisera receptet så det sparas i en lista på användarens profil, rata receptet så det inte tas med i slumpningen igen, eller slumpa fram ett nytt recept. På användarens profil kan favoriserade och ratade recept visas och hanteras, och användaren kan även ställa in en kostinställning om denne är vegetarian, vegan eller allätare.
 
-(Screencap med beskrivning av funktionaliteten)
+
+
+Startsidan av applikationen, där man får valet att logga in via facebook längst upp i högra hörnet.
+
+
+![Screencap på startsidan om man är utloggad](Screencaps/startsida-utloggad.tiff "Startsida, utloggad")
+
+
+Hur receptsidor ser ut om man inte är inloggad. Alla recept har en unik URL, och man behöver inte vara inloggad för att visa dem. Man kan dock inte slumpa fram andra recept om man inte är inloggad.
+
+
+![Screencap på receptsida om man är utloggad](Screencaps/recept-utloggad.tiff "Receptsida, utloggad")
+
+
+Hur receptsidor ser ut om man är inloggad. Funktionalitet för att slumpa fram nytt recept, och gå in på användarens profil tillkommer uppe i menyraden.
+
+
+![Screencap på recept om man är inloggad](Screencaps/startsida-utloggad.tiff "Receptsida, inloggad")
+
+
+Hur användarens profil ser ut. Användaren har möjlighet att gå in och hantera sina favoritrecept och de ratade recepten, samt välja kost-inställning och att logga ut från facebook och applikationen.
+
+
+![Screencap på profilsidan om man är inloggad](Screencaps/startsida-utloggad.tiff "Profilsidan")
+
+
+Hur användarens hantering av favoriserade recept ser ut. Användaren har möjlighet att gå in på receptet via länken och att ta bort favoriseringen genom att trycka på krysset.
+
+
+![Screencap på profilsidans hantering av favoriserade recept](Screencaps/startsida-utloggad.tiff "Profilsidans hantering av favoritrecept")
+
+
+Hur användarens hantering av ratade recept ser ut. Användaren har samma möjlighet som vid de favoriserade recepten att gå in på receptet via länken och att ta bort ratningen genom att trycka på krysset.
+
+
+![Screencap på profilsidans hantering av ratade recept](Screencaps/startsida-utloggad.tiff "profilsidans hantering av ratade recept")
+
 
 
 ### Serversida
