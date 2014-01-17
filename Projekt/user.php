@@ -4,8 +4,6 @@ require_once("db/config.php");
 require_once("db/DAL.php");
 require_once("db/UserDAL.php");
 
-error_reporting(E_ALL);
-
 // Handle users in db
 
 $userDAL = new UserDAL();

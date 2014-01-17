@@ -208,16 +208,17 @@ class RecipeDAL extends DAL {
 	 	}
         return $return;
 	}
+	
 	/**
 	 * @return Array of recipeID's
 	 */
-	public function getUserDisliked($userID) {
-		$sql = "SELECT RecipeID FROM RecipeUserComment WHERE UserID = ? && Comment = 'dislike'";
+	public function getUserComments($userID, $comment) {
+		$sql = "SELECT RecipeID FROM RecipeUserComment WHERE UserID = ? && Comment = ?";
         $prep = $this->connection->prepare($sql);
         if ($prep == false) {
             throw new Exception("prepare of [$sql] failed " . $this->connection->error);
         }
-        $exec = $prep->bind_param("i", $userID);
+        $exec = $prep->bind_param("is", $userID, $comment);
 		if ($exec == false) {
 			throw new Exception("Bind param of [$sql] failed " . $prep->error);
 		}
@@ -238,17 +239,16 @@ class RecipeDAL extends DAL {
 	 	}
         return $return;
 	}
-	
 	/**
-	 * @return Array of recipeID's
+	 * @return string comment
 	 */
-	public function getUserLiked($userID) {
-		$sql = "SELECT RecipeID FROM RecipeUserComment WHERE UserID = ? && Comment = 'like'";
+	public function getRecipeComment($userID, $recipeID) {
+		$sql = "SELECT Comment FROM RecipeUserComment WHERE UserID = ? && RecipeID = ?";
         $prep = $this->connection->prepare($sql);
         if ($prep == false) {
             throw new Exception("prepare of [$sql] failed " . $this->connection->error);
         }
-        $exec = $prep->bind_param("i", $userID);
+        $exec = $prep->bind_param("ii", $userID, $recipeID);
 		if ($exec == false) {
 			throw new Exception("Bind param of [$sql] failed " . $prep->error);
 		}
@@ -257,15 +257,15 @@ class RecipeDAL extends DAL {
         	throw new Exception("execute of [$sql] failed " . $prep->error);
         }
 
-        $exec = $prep->bind_result($recipeID);
+        $exec = $prep->bind_result($comment);
         if ($exec == false) {
         	throw new Exception("execute of [$sql] failed " . $prep->error);
         }
 
-        $return = array();
+        $return = "";
 
 	    while ($prep->fetch()) {
-	        $return[] = $recipeID;
+	        $return = $comment;
 	 	}
         return $return;
 	}

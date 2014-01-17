@@ -4,10 +4,10 @@ require_once("db/config.php");
 require_once("db/DAL.php");
 require_once("db/RecipeDAL.php");
 
-error_reporting(E_ALL);
+// Set cache
+//header("Cache-Control: public, max-age=2592000");
 
 // Handle recipes in db
-
 $recipeDAL = new RecipeDAL();
 $savedRecipes = $recipeDAL->getRecipes(); // Without category and ingredients
 
@@ -178,7 +178,7 @@ if ($_GET["funct"] == "getRandomUserRecipeID") {
 			}
 		}
 	}
-	$dislikedIds = $recipeDAL->getUserDisliked($id);
+	$dislikedIds = $recipeDAL->getUserComments($id, "dislike");
 	if ($diet == "all") {
 		foreach($savedRecipes as $recipe) {
 			$isBad = false;
@@ -215,45 +215,42 @@ if ($_GET["funct"] == "getRandomUserRecipeID") {
 	try {
 		$recipeID = $_GET["recipeID"];
 		$recipe = $recipeDAL->getRecipeByID($recipeID);
-		$recipe["ingredients"] = $recipeDAL->getIngredients($recipeID);
-		if ($recipe != null) {
+		if ($recipe["title"] != "") {
+			$recipe["ingredients"] = $recipeDAL->getIngredients($recipeID);
+						
 			echo json_encode($recipe);
 		} else {
 			echo "Error";
 		}
+		
 	} catch (Exception $e) {
 		echo "Error";
 	}
 	
 	
-} else if ($_GET["funct"] == "recipeUserBan") {
+} else if ($_GET["funct"] == "recipeUserComment") {
 	$id = $_GET["id"];
 	$recipeID = $_GET["recipeID"];
+	$userComment = $_GET["comment"];
 	$savedRecipe = "";
 	foreach ($savedRecipes as $recipe) {
 		if ($recipe["recipeID"] == $recipeID) {
 			$savedRecipe = $recipe;
 		}
 	}
-	if ($savedRecipe != "") {
-		$recipeDAL->addComment($id, $savedRecipe["recipeID"], "dislike");
-		echo $savedRecipe["title"];
+	if ($savedRecipe["title"] != "") {
+		$comment = $recipeDAL->getRecipeComment($id, $recipeID);
+		
+		if ($comment == "") {
+			echo $comment;
+			$recipeDAL->addComment($id, $savedRecipe["recipeID"], $userComment);
+			echo $savedRecipe["title"];
+		} else {
+			echo "Error";
+		}
+		
 	} else {
 		echo "Error";
-	}
-	
-} else if ($_GET["funct"] == "recipeUserFavour") {
-	$id = $_GET["id"];
-	$recipeID = $_GET["recipeID"];
-	$savedRecipe = "";
-	foreach ($savedRecipes as $recipe) {
-		if ($recipe["recipeID"] == $recipeID) {
-			$savedRecipe = $recipe;
-		}
-	}
-	if ($savedRecipe != "") {
-		$recipeDAL->addComment($id, $savedRecipe["recipeID"], "like");
-		echo $savedRecipe["title"];
 	}
 	
 } else if ($_GET["funct"] == "recipeUserRemoveComment") {
@@ -264,48 +261,26 @@ if ($_GET["funct"] == "getRandomUserRecipeID") {
 		$recipeDAL->deleteComment($id, $recipeID);
 		echo "Deleted";
 	} catch (Exception $e){
-		echo "Error occured: ".$e;
+		echo "Error";
 	}
-	
-	
-	
-} else if ($_GET["funct"] == "recipeGetBanned") {
+} else if ($_GET["funct"] == "recipeGetComments") {
 	$id = $_GET["id"];
-	$bannedIDs = $recipeDAL->getUserDisliked($id);
-	if (count($bannedIDs) > 0) {
-		$html = "<ul class='list-unstyled'>";
-		foreach ($bannedIDs as $banned) {
+	$comment = $_GET["comment"];
+	$commentedIDs = $recipeDAL->getUserComments($id, $comment);
+	if (count($commentedIDs) > 0) {
+		$list = array();
+		foreach ($commentedIDs as $commented) {
 			foreach ($savedRecipes as $recipe) {
-				if ($recipe["recipeID"] == $banned) {
-					$html .= "<li><a class='disban-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> <a href='?recipeID=".$recipe["recipeID"]."'>".$recipe['title']."</a></li>";
+				if ($recipe["recipeID"] == $commented) {
+					$list[] = $recipe;			
 				}
 			}
 		}
-		$html .= "</ul>";
-		echo $html; 
+		echo json_encode($list);
 	} else {
-		echo "Det finns inga ratade recept.";
+		echo "NoneFound";
 	}
-} else if ($_GET["funct"] == "recipeGetFavoured") {
-	$id = $_GET["id"];
-	$favouredIDs = $recipeDAL->getUserLiked($id);
-	if (count($favouredIDs) > 0) {
-		$html = "<ul class='list-unstyled'>";
-		foreach ($favouredIDs as $favoured) {
-			foreach ($savedRecipes as $recipe) {
-				if ($recipe["recipeID"] == $favoured) {
-					$html .= "<li><a class='disfavour-link' href='?recipeID=".$recipe["recipeID"]."'>X</a> <a href=?recipeID=".$recipe["recipeID"].">".$recipe['title']."</a></li>";
-				}
-			}
-		}
-		$html .= "</ul>";
-		echo $html; 
-	} else {
-		echo "Det finns inga favoriserade recept.";
-	}
-}
-
-
+} 
 
 function getPageFromURL($url) {
 	$curl = curl_init();
