@@ -291,34 +291,45 @@ function showRecipe(recipeID) {
 			$("#recipe-remove").click(function() {
 				// Happens when recipe is removed from generator
 				var recipeID = $("#recipeID").val();
-				$.ajax({
-					type: "GET",
-					url: "recipe.php",
-					data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "dislike" }
-				}).done(function(data) {
-					if (data != "Error") {
-						$("#content").prepend("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Receptet '"+data+"' har ratats, och kommer inte visas igen. Du kan hantera ratade recept på din profil.</div>");
-					} else {
-						$("#content .alert-dismissable").remove();
-						$("#content").prepend("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Det gick inte att rata receptet.</div>");
-					}
-				});
+				if (id != "") {
+					$.ajax({
+						type: "GET",
+						url: "recipe.php",
+						data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "dislike" }
+					}).done(function(data) {
+						if (data != "Error") {
+							$("#content").prepend("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Receptet '"+data+"' har ratats, och kommer inte visas igen. Du kan hantera ratade recept på din profil.</div>");
+						} else {
+							$("#content .alert-dismissable").remove();
+							$("#content").prepend("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Det gick inte att rata receptet.</div>");
+						}
+					});
+				} else {
+					$("#content .alert-dismissable").remove();
+					$("#content").prepend("<div class='alert alert-info alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Du måste logga in för att kunna rata receptet.</div>");
+				}
 			});
 			$("#recipe-favour").click(function() {
 				// Happens when recipe is favoured from generator
 				var recipeID = $("#recipeID").val();
-				$.ajax({
-					type: "GET",
-					url: "recipe.php",
-					data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "like" }
-				}).done(function(data) {
-					if (data != "Error") {
-						$("#content").prepend("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Receptet '"+data+"' har favoriserats. \n\nDu kan hantera favoriserade recept på din profil.</div>");
-					} else {
-						$("#content .alert-dismissable").remove();
-						$("#content").prepend("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Det gick inte att favorisera receptet.</div>");
-					}
-				});
+				if (id != "") {
+					$.ajax({
+						type: "GET",
+						url: "recipe.php",
+						data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "like" }
+					}).done(function(data) {
+						if (data != "Error") {
+							$("#content").prepend("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Receptet '"+data+"' har favoriserats. \n\nDu kan hantera favoriserade recept på din profil.</div>");
+						} else {
+							$("#content .alert-dismissable").remove();
+							$("#content").prepend("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Det gick inte att favorisera receptet.</div>");
+						}
+					});
+				} else {
+					$("#content .alert-dismissable").remove();
+					$("#content").prepend("<div class='alert alert-info alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Du måste logga in för att kunna favorisera receptet.</div>");
+				}
+				
 			});
 		} else {
 			$("#content").empty();
