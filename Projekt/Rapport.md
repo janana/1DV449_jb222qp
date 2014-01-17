@@ -2,8 +2,10 @@
 ## - FoodGen
 
 
-(Länk till projektet)[http://janinaeb.se/FoodGen] 
+[Länk till projektet](http://janinaeb.se/FoodGen)
+
 (OBS: Måste logga in med facebook för att få tillgång till all funktionalitet)
+
 
 ### Inledning
 Nästan varje dag ställs jag inför ett jobbigt beslut - vad ska jag äta idag? Därför har jag alltid önskat ha någon som kan bestämma åt mig, helst någon som vet vad jag är sugen på. Men eftersom tekniken inte gått så pass långt än, så får det duga med en applikation man kan tala om vad man tycker om och inte för.
