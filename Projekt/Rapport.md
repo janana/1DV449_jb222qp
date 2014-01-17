@@ -20,7 +20,7 @@ Startsidan av applikationen, där man får valet att logga in via facebook läng
 ![Screencap på startsidan om man är utloggad](Screencaps/startsida-utloggad.tiff "Startsida, utloggad")
 
 
-Hur receptsidor ser ut om man inte är inloggad. Alla recept har en unik URL, och man behöver inte vara inloggad för att visa dem. Man kan dock inte slumpa fram andra recept om man inte är inloggad.
+Hur receptsidor ser ut om man inte är inloggad. Alla recept har en unik URL, och man behöver inte vara inloggad för att visa dem. Man kan dock inte slumpa fram recept om man inte är inloggad. Man kan inte heller rata eller favorisera receptet, trots att knapparna fortfarande finns på sidan. (Jag fick inte till funktionalitet för att testa om användaren är inloggad innan receptets HTML renderas, då facebooks api initieras asynkront, och sidan blir mycket långsammare att ladda annars.)
 
 
 ![Screencap på receptsida om man är utloggad](Screencaps/recept-utloggad.tiff "Receptsida, utloggad")
@@ -29,7 +29,7 @@ Hur receptsidor ser ut om man inte är inloggad. Alla recept har en unik URL, oc
 Hur receptsidor ser ut om man är inloggad. Funktionalitet för att slumpa fram nytt recept, och gå in på användarens profil tillkommer uppe i menyraden.
 
 
-![Screencap på recept om man är inloggad](Screencaps/startsida-utloggad.tiff "Receptsida, inloggad")
+![Screencap på recept om man är inloggad](Screencaps/random-recept.tiff "Receptsida, inloggad")
 
 
 Hur användarens profil ser ut. Användaren har möjlighet att gå in och hantera sina favoritrecept och de ratade recepten, samt välja kost-inställning och att logga ut från facebook och applikationen.
