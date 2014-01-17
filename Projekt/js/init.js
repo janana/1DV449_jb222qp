@@ -156,7 +156,7 @@ function getProfilePage() {
    		});
 		e.preventDefault();
 	});
-	var backLink = "<a id='back' href='#'>Tillbaka till profil</a>";
+	var backLink = "<input type='button' class='btn btn-default' id='back' value='Tillbaka till profil' />";
 	$("#manage-favoured").click(function(e) {
 		$.ajax({
 			type: "GET",
@@ -166,7 +166,7 @@ function getProfilePage() {
 			$("#content").empty();
 			var html = "";
 			if (data != "NoneFound") {
-				var recipes = $.parseJSON(data); 
+				var recipes = $.parseJSON(data);
 				html = "<ul class='list-unstyled'>";
 				$.each(recipes, function(index, recipe) {
 					html += "<li><a class='disfavour-link' href='?recipeID="+recipe.recipeID+"'>X</a> <a href='?recipeID="+recipe.recipeID+"'>"+recipe.title+"</a></li>";
