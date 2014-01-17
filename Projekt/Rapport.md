@@ -20,13 +20,13 @@ Startsidan av applikationen, där man får valet att logga in via facebook läng
 ![Screencap på startsidan om man är utloggad](Screencaps/startsida-utloggad.tiff "Startsida, utloggad")
 
 
-Hur receptsidor ser ut om man inte är inloggad. Alla recept har en unik URL, och man behöver inte vara inloggad för att visa dem. Man kan dock inte slumpa fram recept om man inte är inloggad. Man kan inte heller rata eller favorisera receptet, trots att knapparna fortfarande finns på sidan (Jag fick inte till funktionalitet för att testa om användaren är inloggad innan receptets HTML renderas, då facebooks api initieras asynkront, och sidan blir mycket långsammare att ladda annars.). Vid klick på favorisera- eller rata-knapparna kommer en meddelanderuta upp som ber användaren att logga in via facebook för att kunna använda funktionaliteten.
+Hur receptsidor ser ut om man inte är inloggad. Alla recept har en unik URL, och man behöver inte vara inloggad för att visa dem. Man kan dock inte slumpa fram recept om man inte är inloggad. Man kan inte heller rata eller favorisera receptet, trots att knapparna fortfarande finns på sidan (Jag fick inte till funktionalitet för att testa om användaren är inloggad innan receptets HTML renderas, då facebooks api initieras asynkront, och sidan blir mycket långsammare att ladda annars.). Vid klick på favorisera- eller rata-knapparna kommer en meddelanderuta upp som ber användaren att logga in via facebook för att kunna använda funktionaliteten. Att kunna dela receptet kan användaren fortfarande göra, trots att den inte är inloggad.
 
 
 ![Screencap på receptsida om man är utloggad](Screencaps/recept-utloggad.tiff "Receptsida, utloggad")
 
 
-Hur receptsidor ser ut om man är inloggad. Funktionalitet för att slumpa fram nytt recept, och gå in på användarens profil tillkommer uppe i menyraden.
+Hur receptsidor ser ut om man är inloggad. Funktionalitet för att slumpa fram nytt recept, och gå in på användarens profil tillkommer uppe i menyraden. Användaren har möjlighet att kunna rata, favorisera och dela receptet på facebook.
 
 
 ![Screencap på recept om man är inloggad](Screencaps/random-recept.tiff "Receptsida, inloggad")
@@ -35,19 +35,19 @@ Hur receptsidor ser ut om man är inloggad. Funktionalitet för att slumpa fram 
 Hur användarens profil ser ut. Användaren har möjlighet att gå in och hantera sina favoritrecept och de ratade recepten, samt välja kost-inställning och att logga ut från facebook och applikationen.
 
 
-![Screencap på profilsidan om man är inloggad](Screencaps/startsida-utloggad.tiff "Profilsidan")
+![Screencap på profilsidan om man är inloggad](Screencaps/profil.tiff "Profilsidan")
 
 
 Hur användarens hantering av favoriserade recept ser ut. Användaren har möjlighet att gå in på receptet via länken och att ta bort favoriseringen genom att trycka på krysset.
 
 
-![Screencap på profilsidans hantering av favoriserade recept](Screencaps/startsida-utloggad.tiff "Profilsidans hantering av favoritrecept")
+![Screencap på profilsidans hantering av favoriserade recept](Screencaps/hantera-favoritrecept.tiff "Profilsidans hantering av favoritrecept")
 
 
 Hur användarens hantering av ratade recept ser ut. Användaren har samma möjlighet som vid de favoriserade recepten att gå in på receptet via länken och att ta bort ratningen genom att trycka på krysset.
 
 
-![Screencap på profilsidans hantering av ratade recept](Screencaps/startsida-utloggad.tiff "profilsidans hantering av ratade recept")
+![Screencap på profilsidans hantering av ratade recept](Screencaps/hantera-ratade-recept.tiff "profilsidans hantering av ratade recept")
 
 
 
