@@ -76,7 +76,7 @@ Facebooks api för inloggning och delning av recept.
 Receptinformationen skrapas från [säsongsmats hemsida](säsongsmat.nu), från kategorierna Varmrätter, Förrätter och smårätter, Soppor och Sallader. De har ett api för att hämta recept, men hur jag än gjorde fick jag ändå inte ut all information jag behövde från det. Dessutom skulle jag behövt göra 2-3 förfrågningar till deras api per recept, och eftersom det finns ganska många recept (~120 st just nu i kategorierna jag hämtar ut) tyckte jag att skrapning kändes bättre. Det var inte lätt att skrapa deras hemsida eftersom den är helt ostrukturerad, och efter mycket krångel finns det fortfarande information som inte kommer med på några få recept. 
 
 #### Cachning
-Jag har satt, i .htaccess-filen, att javascript och css cachas i 30 dagar efter att filen senast blev ändrad. Bilder är satta till 90 dagar. 
+Jag har satt, i .htaccess-filen, att javascript och css cachas i 30 dagar efter att filen senast blev ändrad (Enl bineros cache-hjälp). Bilder är satta till 90 dagar. 
 
 ```
 ExpiresActive On
