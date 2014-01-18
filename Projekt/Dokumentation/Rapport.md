@@ -6,6 +6,8 @@
 
 (OBS: Måste logga in med facebook för att få tillgång till all funktionalitet)
 
+[Länk till redovisnings-video](http://www.youtube.com/watch?v=ARbTCLKMQq4)
+
 
 ### Inledning
 Nästan varje dag ställs jag inför ett jobbigt beslut - vad ska jag äta idag? Därför har jag alltid önskat ha någon som kan bestämma åt mig, helst någon som vet vad jag är sugen på. Men eftersom tekniken inte gått så pass långt än, så får det duga med en applikation man kan tala om vad man tycker om och inte för.
@@ -76,19 +78,17 @@ Facebooks api för inloggning och delning av recept.
 Receptinformationen skrapas från [säsongsmats hemsida](säsongsmat.nu), från kategorierna Varmrätter, Förrätter och smårätter, Soppor och Sallader. De har ett api för att hämta recept, men hur jag än gjorde fick jag ändå inte ut all information jag behövde från det. Dessutom skulle jag behövt göra 2-3 förfrågningar till deras api per recept, och eftersom det finns ganska många recept (~120 st just nu i kategorierna jag hämtar ut) tyckte jag att skrapning kändes bättre. Det var inte lätt att skrapa deras hemsida eftersom den är helt ostrukturerad, och efter mycket krångel finns det fortfarande information som inte kommer med på några få recept. 
 
 #### Cachning
-Jag har satt, i .htaccess-filen, att javascript och css cachas i 30 dagar efter att filen senast blev ändrad (Enl bineros cache-hjälp). Bilder är satta till 90 dagar. 
+Jag har satt, i .htaccess-filen, att css cachas i 30 dagar efter att filen senast blev ändrad (Enl bineros cache-hjälp). Bilder är satta till 90 dagar. 
 
 ```
 ExpiresActive On
-ExpiresByType application/javascript M2592000
-ExpiresByType text/javascript M2592000
 ExpiresByType text/css M2592000
 ExpiresByType image/jpg M7776000
 ExpiresByType image/png M7776000
 ```
 
 
-HTML och text bör inte cachas då HTML-sidan ändras dynamiskt hela tiden, speciellt när man genererar recept. En text-fil används för att lagra senaste datum recept-databasen uppdaterades, så därför kan inte den cachas då den ändras varje dag någon besöker hemsidan.
+HTML och text bör inte cachas då HTML-sidan ändras dynamiskt hela tiden, speciellt när man genererar recept. En text-fil används för att lagra senaste datum recept-databasen uppdaterades, så därför kan inte den cachas då den ändras varje dag någon besöker hemsidan. Javascript kan inte heller cachas, då en användare kan ändra sina inställningar när den använder sidan. Om javascript-filen cachas kan inte användaren byta kost, då den fastnar på samma som tidigare.
 
 #### Felhantering
 Fel från serversidan hanteras via strängar, vilket skapar många strängberoenden som inte är speciellt bra men som fungerar i applikationen som den ser ut nu. Efter ett serveranrop kontrolleras utdatan om den är fel, och annars tas den omhand som ett objekt som är förväntat av applikationen. Generella fel- och rättmeddelanden visas efter utförd funktion via bootstraps alert-rutor.
