@@ -8,7 +8,7 @@ $(document).ready(function() {
   	
 	window.fbAsyncInit = function() {
 		FB.init({
-			appId      : '574244782654416',
+			appId      : '',
 			status     : true, // check login status
 			cookie     : true, // enable cookies to allow the server to access the session
 			xfbml      : true  // parse XFBML
