@@ -39,17 +39,30 @@ $(document).ready(function() {
 		getFrontPage();
 	}
 	
+	window.onpopstate = function(e) {
+		query = getQueryString();
+		if (query == "profile") {
+			getProfilePage();
+		} else if (query != "") {
+			showRecipe(query);
+		} else {
+			getFrontPage();
+		}
+	}
+	
 	// Set click-events
 	$("#random-button").click(function(e) {
 		generateRecipe();
 		e.preventDefault();
 	});
 	$("#profile-button").click(function(e) {
-		setQueryString("profile");
+		setNewPage("profile");
+		getProfilePage();
 		e.preventDefault();
 	});
 	$("#brand").click(function(e) {
-		setQueryString("");
+		setNewPage("");
+		getFrontPage();
 		e.preventDefault();
 	});
 });
@@ -58,16 +71,18 @@ function runApplication() {
 	FB.api('/me', function(response) {
 		try {
 			// Test if user is saved in db, then get diet - otherwise save user
+			var accessToken = $("#accessToken").val();
 			$.ajax({
-				type: "GET",
+				type: "POST",
 				url: "user.php",
-				data: { funct: "addUser", name: response.name, id: response.id }
+				data: { funct: "addUser", name: response.name, id: response.id, accessToken: accessToken }
 			}).done(function(data) {
 				var str = data.split(";");
 				if (str[0] == "User found" || data == "User saved") {
+					
 					$("#profile-button").show();
 					$("#random-button").show();
-					if (str[0] == "User found" && str[1] != undefined || str[0] == "User found" && str[1] != "") {	
+					if (str[0] == "User found" && str[1] != "") {	
 						diet = str[1];
 						name = response.name;
 						id = response.id;
@@ -93,7 +108,8 @@ function generateRecipe() {
 		data: { funct: "getRandomUserRecipeID", id: id, diet: diet }
 	}).done(function(data) {
 		if (data != "Error") {
-			setQueryString("recipeID="+data);
+			setNewPage("recipeID="+data);
+			showRecipe(data);
 		} else {
 			$("#content").empty();
 			$("#content").prepend("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Ett fel inträffade och det gick inte att hämta receptet.</div>");
@@ -124,10 +140,11 @@ function chooseDiet() {
 	}
 	$("#veg-form").submit(function(e) {
 		diet = $("[name='veg']:checked").val(); // Get the selected value
+		var accessToken = $("#accessToken").val();
 		$.ajax({
-			type: "GET",
+			type: "POST",
 			url: "user.php",
-			data: { funct: "saveDiet", name: name, id: id, diet: diet }
+			data: { funct: "saveDiet", name: name, id: id, diet: diet, accessToken: accessToken }
 		}).done(function(data) {
 			if (data !== "Diet saved") {
 				$("#content .alert-dismissable").remove();
@@ -152,16 +169,17 @@ function getProfilePage() {
 	});
 	$("#logout-button").click(function(e) {
 		FB.logout(function() {
-        	setQueryString("");
+        	window.location = "?"; // Have to reload the site to get logged out state
    		});
 		e.preventDefault();
 	});
 	var backLink = "<input type='button' class='btn btn-default' id='back' value='Tillbaka till profil' />";
 	$("#manage-favoured").click(function(e) {
+		var accessToken = $("#accessToken").val();
 		$.ajax({
-			type: "GET",
+			type: "POST",
 			url: "recipe.php",
-			data: { funct: "recipeGetComments", id: id, comment: "like" }
+			data: { funct: "recipeGetComments", id: id, comment: "like", accessToken: accessToken }
 		}).done(function(data) {
 			$("#content").empty();
 			var html = "";
@@ -182,9 +200,9 @@ function getProfilePage() {
 				var recipeID = href.replace(/^\D+/g, "");
 				if (recipeID != "") {
 					$.ajax({
-						type: "GET",
+						type: "POST",
 						url: "recipe.php",
-						data: { funct: "recipeUserRemoveComment", id: id, recipeID: recipeID }
+						data: { funct: "recipeUserRemoveComment", id: id, recipeID: recipeID, accessToken: accessToken }
 					}).done(function(data) {
 						if (data == "Deleted") {
 							$("#content .alert-dismissable").remove();
@@ -207,10 +225,11 @@ function getProfilePage() {
 		e.preventDefault();
 	});
 	$("#manage-removed").click(function(e) {
+		var accessToken = $("#accessToken").val();
 		$.ajax({
-			type: "GET",
+			type: "POST",
 			url: "recipe.php",
-			data: { funct: "recipeGetComments", id: id, comment: "dislike" }
+			data: { funct: "recipeGetComments", id: id, comment: "dislike", accessToken: accessToken }
 		}).done(function(data) {
 			$("#content").empty();
 			var html = "";
@@ -230,9 +249,9 @@ function getProfilePage() {
 				var recipeID = href.replace(/^\D+/g, "");
 				if (recipeID != "") {
 					$.ajax({
-						type: "GET",
+						type: "POST",
 						url: "recipe.php",
-						data: { funct: "recipeUserRemoveComment", id: id, recipeID: recipeID }
+						data: { funct: "recipeUserRemoveComment", id: id, recipeID: recipeID, accessToken: accessToken }
 					}).done(function(data) {
 						if (data == "Deleted") {
 							$("#content .alert-dismissable").remove();
@@ -291,12 +310,14 @@ function showRecipe(recipeID) {
 			$("#recipe-remove").click(function() {
 				// Happens when recipe is removed from generator
 				var recipeID = $("#recipeID").val();
+				var accessToken = $("#accessToken").val();
 				if (id != "") {
 					$.ajax({
-						type: "GET",
+						type: "POST",
 						url: "recipe.php",
-						data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "dislike" }
+						data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "dislike", accessToken: accessToken }
 					}).done(function(data) {
+						console.log(data);
 						if (data != "Error") {
 							$("#content").prepend("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Receptet '"+data+"' har ratats, och kommer inte visas igen. Du kan hantera ratade recept på din profil.</div>");
 						} else {
@@ -312,11 +333,12 @@ function showRecipe(recipeID) {
 			$("#recipe-favour").click(function() {
 				// Happens when recipe is favoured from generator
 				var recipeID = $("#recipeID").val();
+				var accessToken = $("#accessToken").val();
 				if (id != "") {
 					$.ajax({
-						type: "GET",
+						type: "POST",
 						url: "recipe.php",
-						data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "like" }
+						data: { funct: "recipeUserComment", id: id, recipeID: recipeID, comment: "like", accessToken: accessToken }
 					}).done(function(data) {
 						if (data != "Error") {
 							$("#content").prepend("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>Receptet '"+data+"' har favoriserats. \n\nDu kan hantera favoriserade recept på din profil.</div>");
@@ -338,8 +360,9 @@ function showRecipe(recipeID) {
 	});
 }
 
-function setQueryString(query) {
-	window.location.href = "?"+query;
+function setNewPage(query) {
+	var url = "?"+query;
+	history.pushState("", "FoodGen", url);
 }
 function getQueryString() {
 	var query = window.location.search;

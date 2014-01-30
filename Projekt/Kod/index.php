@@ -1,3 +1,7 @@
+<?php
+	session_start();
+	$_SESSION["accessToken"] = md5(uniqid(mt_rand(), true));
+?>
 <!DOCTYPE html>
 <html lang="sv" >
 	<head>
@@ -12,6 +16,7 @@
 		<link href="css/stylesheet.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
+		<input type="hidden" id="accessToken" value="<?php echo $_SESSION["accessToken"]; ?>"/>
 		<div id="fb-root"> </div>
 		<div id="container" class="container">
 			<div id="content"> </div>

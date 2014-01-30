@@ -4,10 +4,8 @@ require_once("db/config.php");
 require_once("db/DAL.php");
 require_once("db/RecipeDAL.php");
 
-// Set cache
-//header("Cache-Control: public, max-age=2592000");
-
 // Handle recipes in db
+session_start();
 $recipeDAL = new RecipeDAL();
 $savedRecipes = $recipeDAL->getRecipes(); // Without category and ingredients
 
@@ -20,7 +18,6 @@ if ($savedDate != $todaysDate) {
 	$isUpdateTime = true;
 	file_put_contents("updateRecipe.txt", $todaysDate);
 }
-
 /**
  * CategoryID:
  * 5. Vegetariska recept
@@ -228,57 +225,75 @@ if ($_GET["funct"] == "getRandomUserRecipeID") {
 	}
 	
 	
-} else if ($_GET["funct"] == "recipeUserComment") {
-	$id = $_GET["id"];
-	$recipeID = $_GET["recipeID"];
-	$userComment = $_GET["comment"];
+} else if ($_POST["funct"] == "recipeUserComment") {
+	$id = $_POST["id"];
+	$recipeID = $_POST["recipeID"];
+	$userComment = $_POST["comment"];
 	$savedRecipe = "";
-	foreach ($savedRecipes as $recipe) {
-		if ($recipe["recipeID"] == $recipeID) {
-			$savedRecipe = $recipe;
+	if (isset($_SESSION["accessToken"]) &&
+		isset($_POST["accessToken"]) &&
+		$_POST["accessToken"] == $_SESSION["accessToken"]) {
+			
+		foreach ($savedRecipes as $recipe) {
+			if ($recipe["recipeID"] == $recipeID) {
+				$savedRecipe = $recipe;
+			}
 		}
-	}
-	if ($savedRecipe["title"] != "") {
-		$comment = $recipeDAL->getRecipeComment($id, $recipeID);
-		
-		if ($comment == "") {
-			echo $comment;
-			$recipeDAL->addComment($id, $savedRecipe["recipeID"], $userComment);
-			echo $savedRecipe["title"];
+		if ($savedRecipe["title"] != "") {
+			$comment = $recipeDAL->getRecipeComment($id, $recipeID);
+			
+			if ($comment == "") {
+				echo $comment;
+				$recipeDAL->addComment($id, $savedRecipe["recipeID"], $userComment);
+				echo $savedRecipe["title"];
+			} else {
+				echo "Error";
+			}
 		} else {
 			echo "Error";
 		}
-		
 	} else {
 		echo "Error";
 	}
-	
-} else if ($_GET["funct"] == "recipeUserRemoveComment") {
-	$id = $_GET["id"];
-	$recipeID = $_GET["recipeID"];
-	
-	try {
-		$recipeDAL->deleteComment($id, $recipeID);
-		echo "Deleted";
-	} catch (Exception $e){
+} else if ($_POST["funct"] == "recipeUserRemoveComment") {
+	$id = $_POST["id"];
+	$recipeID = $_POST["recipeID"];
+	if (isset($_SESSION["accessToken"]) &&
+		isset($_POST["accessToken"]) &&
+		$_POST["accessToken"] == $_SESSION["accessToken"]) {
+			
+		try {
+			$recipeDAL->deleteComment($id, $recipeID);
+			echo "Deleted";
+		} catch (Exception $e){
+			echo "Error";
+		}
+	} else {
 		echo "Error";
 	}
-} else if ($_GET["funct"] == "recipeGetComments") {
-	$id = $_GET["id"];
-	$comment = $_GET["comment"];
-	$commentedIDs = $recipeDAL->getUserComments($id, $comment);
-	if (count($commentedIDs) > 0) {
-		$list = array();
-		foreach ($commentedIDs as $commented) {
-			foreach ($savedRecipes as $recipe) {
-				if ($recipe["recipeID"] == $commented) {
-					$list[] = $recipe;			
+} else if ($_POST["funct"] == "recipeGetComments") {
+	$id = $_POST["id"];
+	$comment = $_POST["comment"];
+	if (isset($_SESSION["accessToken"]) &&
+		isset($_POST["accessToken"]) &&
+		$_POST["accessToken"] == $_SESSION["accessToken"]) {
+			
+		$commentedIDs = $recipeDAL->getUserComments($id, $comment);
+		if (count($commentedIDs) > 0) {
+			$list = array();
+			foreach ($commentedIDs as $commented) {
+				foreach ($savedRecipes as $recipe) {
+					if ($recipe["recipeID"] == $commented) {
+						$list[] = $recipe;			
+					}
 				}
 			}
+			echo json_encode($list);
+		} else {
+			echo "NoneFound";
 		}
-		echo json_encode($list);
 	} else {
-		echo "NoneFound";
+		echo "Error";
 	}
 } 
 
